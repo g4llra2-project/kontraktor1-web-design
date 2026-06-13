@@ -1,0 +1,6 @@
+{
+  "name": "OH Architecture & Build",
+  "description": "Website kalkulator RAB, generator denah interaktif, dan visualisasi AI konsep desain arsitektur.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
