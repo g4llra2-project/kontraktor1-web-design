@@ -7,13 +7,14 @@ import { useState, useEffect, useRef } from 'react';
 import { ViewPath } from '../../types';
 import { ArrowDown, X, MapPin, Calendar, Maximize, Hammer, Check } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
+import NextImage from '../NextImage';
 
 interface WorksViewProps {
   onNavigate: (view: ViewPath) => void;
   onOpenEnquiry: () => void;
 }
 
-// 1. Smooth scroll-parallax effect component
+// 1. Smooth scroll-parallax effect component (Formatted for NextJS CMS)
 function ParallaxImage({ src, alt }: { src: string; alt: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -27,14 +28,16 @@ function ParallaxImage({ src, alt }: { src: string; alt: string }) {
   const y = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"]);
 
   return (
-    <div ref={containerRef} className="absolute inset-0 overflow-hidden w-full h-full">
-      <motion.img
-        src={src}
-        alt={alt}
-        referrerPolicy="no-referrer"
-        style={{ y, scale: 1.25 }} // Scale up slightly to prevent clean limits leakage
-        className="w-full h-full object-cover transition-transform duration-700 ease-out"
-      />
+    <div ref={containerRef} className="absolute inset-0 overflow-hidden w-full h-full select-none">
+      <motion.div style={{ y, scale: 1.25 }} className="w-full h-full absolute inset-0">
+        <NextImage
+          src={src}
+          alt={alt}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="transition-transform duration-700 ease-out object-cover"
+        />
+      </motion.div>
       {/* Soft gradient filter overlay */}
       <div className="absolute inset-0 bg-radial-gradient(circle_at_center,transparent_40%,rgba(26,26,24,0.15)_95%) pointer-events-none" />
     </div>
@@ -423,13 +426,14 @@ export default function WorksView({ onNavigate, onOpenEnquiry }: WorksViewProps)
                 <X className="w-4 h-4" />
               </button>
 
-              {/* Column 1: Graphic / Photo frame underlay (col-span-5) */}
+              {/* Column 1: Graphic / Photo frame underlay (col-span-12 md:col-span-5) (NextJS Opt) */}
               <div className="relative col-span-5 h-[220px] md:h-full min-h-[220px] bg-neutral-900 overflow-hidden border-b md:border-b-0 md:border-r border-[#D6D2C8]">
-                <img
+                <NextImage
                   src={selectedProj.imageUrl}
                   alt={selectedProj.title}
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover pointer-events-none select-none"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 30vw"
+                  className="pointer-events-none select-none object-cover"
                 />
                 {/* Visual compass asset watermark */}
                 <span className="absolute bottom-4 left-4 font-mono text-[9px] text-white/50 bg-[#1A1A18]/60 py-1.5 px-3 backdrop-blur-xs select-none uppercase tracking-widest rounded-xs">

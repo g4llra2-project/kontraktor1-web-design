@@ -6,6 +6,7 @@
 import { ViewPath } from '../../types';
 import { motion } from 'motion/react';
 import { HelpCircle, FileText, Compass, Sparkles, Hammer, CheckSquare, Search, ClipboardCheck } from 'lucide-react';
+import NextImage from '../NextImage';
 
 interface ProcessViewProps {
   onNavigate: (view: ViewPath) => void;
@@ -88,13 +89,14 @@ export default function ProcessView({ onNavigate, onOpenEnquiry }: ProcessViewPr
       <section className="px-6 md:px-12 pb-28 max-w-7xl mx-auto w-full border-b border-brand-black/10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
           
-          {/* Left panel simulating real human discussion on-site with manual parallax offset */}
+          {/* Left panel simulating real human discussion on-site with manual parallax offset (NextJS Opt) */}
           <div className="lg:col-span-6 relative group overflow-hidden bg-[#EDEAE3] rounded-xs border border-[#D6D2C8] shadow-md aspect-[4/3]">
-            <img 
+            <NextImage 
               src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80"
               alt="Kolaborasi tim arsitek dan klien"
-              referrerPolicy="no-referrer"
-              className="w-full h-[120%] object-cover absolute top-0 -translate-y-[10%] group-hover:translate-y-0 transition-transform duration-1000 ease-out pointer-events-none select-none"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover absolute top-0 -translate-y-[10%] group-hover:translate-y-0 transition-transform duration-1000 ease-out pointer-events-none select-none"
             />
             {/* Dark gradient overlay */}
             <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/80 via-black/35 to-transparent text-white">
@@ -198,12 +200,13 @@ export default function ProcessView({ onNavigate, onOpenEnquiry }: ProcessViewPr
                 <div className={`lg:col-span-6 ${isEven ? 'lg:order-1' : ''}`}>
                   <div className="relative group overflow-hidden bg-[#EDEAE3] pointer-events-auto rounded-sm border border-[#D6D2C8]/80 shadow-md aspect-[16/11]">
                     
-                    {/* Visual Parallax Element - absolute positioned slightly taller than frame container */}
-                    <img
+                    {/* Visual Parallax Element - absolute positioned slightly taller than frame container (NextJS Opt) */}
+                    <NextImage
                       src={stage.imageUrl}
                       alt={stage.title}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-[124%] object-cover absolute top-0 -translate-y-[12%] group-hover:translate-y-0 transition-transform duration-[1200ms] ease-out select-none"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover absolute top-0 -translate-y-[12%] group-hover:translate-y-0 transition-transform duration-[1200ms] ease-out select-none"
                     />
 
                     {/* Translucit administrative ribbon */}

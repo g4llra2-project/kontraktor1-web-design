@@ -6,6 +6,7 @@
 import { ViewPath } from '../../types';
 import { motion } from 'motion/react';
 import { Shield, Sparkles, User, FileCheck, ArrowRight, Layers, Compass, Sun, Ruler } from 'lucide-react';
+import NextImage from '../NextImage';
 
 interface StudioViewProps {
   onNavigate: (view: ViewPath) => void;
@@ -126,11 +127,12 @@ export default function StudioView({ onNavigate, onOpenEnquiry }: StudioViewProp
           {/* Left Column: Vertical Image with Staggered Caption */}
           <div className="lg:col-span-5 space-y-8 lg:mt-12">
             <div className="relative aspect-[3/4] bg-[#EDEAE3] overflow-hidden border border-[#D6D2C8]/50 rounded-xs group shadow-sm">
-              <img 
+              <NextImage 
                 src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1000&q=80"
                 alt="Studio Eksperimen" 
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 pointer-events-none select-none"
+                fill
+                sizes="(max-width: 768px) 100vw, 40vw"
+                className="object-cover transition-transform duration-1000 group-hover:scale-105 pointer-events-none select-none"
               />
               <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/85 via-black/40 to-transparent text-white">
                 <span className="font-mono text-[9px] uppercase tracking-widest text-brand-orange block font-bold">[Eksplorasi Ruang]</span>
@@ -168,11 +170,12 @@ export default function StudioView({ onNavigate, onOpenEnquiry }: StudioViewProp
 
             {/* Asymmetric Overlapped Image */}
             <div className="relative aspect-[16/10] bg-[#EDEAE3] overflow-hidden border border-[#D6D2C8]/50 rounded-xs group shadow-md lg:translate-x-12">
-              <img 
+              <NextImage 
                 src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1200&q=80"
                 alt="Detil Kejujuran Material" 
-                referrerPolicy="no-referrer"
-                className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 pointer-events-none select-none"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover transition-transform duration-1000 group-hover:scale-105 pointer-events-none select-none"
               />
               <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-[#1A1A18]/90 via-[#1A1A18]/45 to-transparent text-white flex justify-between items-end">
                 <span className="font-serif text-xs italic text-white/90">Instalasi Kisi Bilah Kayu Cedar Adaptif</span>

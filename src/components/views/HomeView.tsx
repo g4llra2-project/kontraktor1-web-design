@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ArrowUpRight, ArrowDown, Shield, Compass, CircleDollarSign, PencilRuler, Sparkles, Sliders } from 'lucide-react';
 import gsap from 'gsap';
 import ThreeInteractiveCanvas from '../ThreeInteractiveCanvas';
+import NextImage from '../NextImage';
 
 interface HomeViewProps {
   onNavigate: (view: ViewPath) => void;
@@ -260,7 +261,7 @@ export default function HomeView({ onNavigate, onOpenEnquiry }: HomeViewProps) {
           </AnimatePresence>
         </div>
 
-        {/* Sliding Background Frame Placeholder Simulating Architect Study */}
+        {/* Sliding Background Frame Placeholder Simulating Architect Study (Formatted for NextJS CMS) */}
         <div className="absolute inset-0 z-0">
           <AnimatePresence mode="wait">
             <motion.div
@@ -269,15 +270,18 @@ export default function HomeView({ onNavigate, onOpenEnquiry }: HomeViewProps) {
               animate={{ scale: 1.03, opacity: 0.95 }}
               exit={{ scale: 0.98, opacity: 0 }}
               transition={{ duration: 1.2, ease: 'easeOut' }}
-              className="absolute inset-0 flex items-center justify-center bg-zinc-900"
-              style={{
-                backgroundImage: `url(${heroSlides[activeHeroIdx].imageUrl})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                scale: 1.03
-              }}
+              className="absolute inset-0 flex items-center justify-center bg-zinc-900 overflow-hidden"
+              style={{ scale: 1.03 }}
             >
-              <div className="opacity-10 w-[85%] max-w-[500px] z-20 pointer-events-none mix-blend-screen">
+              <NextImage
+                src={heroSlides[activeHeroIdx].imageUrl}
+                alt={heroSlides[activeHeroIdx].title}
+                fill
+                priority
+                sizes="100vw"
+                className="pointer-events-none object-cover"
+              />
+              <div className="opacity-10 w-[85%] max-w-[500px] z-20 pointer-events-none mix-blend-screen relative">
                 {renderVectorDrawing(activeHeroIdx)}
               </div>
             </motion.div>
@@ -612,15 +616,16 @@ export default function HomeView({ onNavigate, onOpenEnquiry }: HomeViewProps) {
         </div>
 
         <div className="h-full min-h-[340px] sm:min-h-[460px] relative overflow-hidden flex flex-col justify-between border border-[#D6D2C8]/75 group shadow-sm bg-neutral-900 rounded-xs">
-          {/* Background Image with stable render */}
-          <div 
-            className="absolute inset-0 scale-100 pointer-events-none group-hover:scale-105 transition-transform duration-700"
-            style={{
-              backgroundImage: 'url("https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80")',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-            }}
-          />
+          {/* Background Image with stable render formatted for NextJS */}
+          <div className="absolute inset-0 scale-100 pointer-events-none group-hover:scale-105 transition-transform duration-700 z-0">
+            <NextImage 
+              src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80"
+              alt="Studi Elevasi Residensial"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+            />
+          </div>
           {/* Overlay gradient to reinforce contrast for the typography */}
           <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/95 via-neutral-950/70 to-neutral-950/35 z-10 pointer-events-none" />
 
@@ -768,17 +773,18 @@ export default function HomeView({ onNavigate, onOpenEnquiry }: HomeViewProps) {
                 PELAJARI ALUR KERJA DETAIL KAMI
               </button>
             </div>
-            {/* Visual stage panel */}
+            {/* Visual stage panel (NextJS Opt) */}
             <div className="h-68 relative overflow-hidden shadow-sm flex items-center justify-center border border-[#A8A49C] rounded-xs select-none bg-neutral-900 group">
-              {/* Clean Background Image */}
-              <div 
-                className="absolute inset-0 scale-100 pointer-events-none transition-transform duration-700 group-hover:scale-105"
-                style={{
-                  backgroundImage: 'url("https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80")',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center'
-                }}
-              />
+              {/* Clean Background Image wrapped for NextJS */}
+              <div className="absolute inset-0 scale-100 pointer-events-none transition-transform duration-700 group-hover:scale-105 z-0">
+                <NextImage 
+                  src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80"
+                  alt="Alur Panduan Proses Kerja"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                />
+              </div>
             </div>
           </div>
 
@@ -819,15 +825,16 @@ export default function HomeView({ onNavigate, onOpenEnquiry }: HomeViewProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 border-b border-brand-black/10">
           
           <div className="lg:col-span-5 h-[340px] lg:h-auto min-h-[340px] relative flex flex-col justify-end p-8 overflow-hidden border-r border-[#D6D2C8] bg-neutral-900 group">
-            {/* Clean Background Image */}
-            <div 
-              className="absolute inset-0 scale-100 pointer-events-none transition-transform duration-700 group-hover:scale-105"
-              style={{
-                backgroundImage: 'url("https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80")',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            />
+            {/* Clean Background Image wrapped for NextJS */}
+            <div className="absolute inset-0 scale-100 pointer-events-none transition-transform duration-700 group-hover:scale-105 z-0">
+              <NextImage 
+                src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80"
+                alt="Testimonial Pemilik Hunian Carmen"
+                fill
+                sizes="(max-width: 768px) 100vw, 40vw"
+                className="object-cover"
+              />
+            </div>
           </div>
 
           <div className="lg:col-span-7 px-8 py-20 md:p-20 flex flex-col justify-center">
