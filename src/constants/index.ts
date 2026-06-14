@@ -7,9 +7,9 @@ import { RoomConfig } from '../types';
 
 // Price per square meter in IDR for each specification level
 export const PRICE_PER_SQM = {
-  standard: 3500000,  // Rp 3.500.000 / m2
-  medium: 5000000,    // Rp 5.000.000 / m2
-  premium: 7500000,   // Rp 7.500.000 / m2
+  standard: 3200000,  // Rp 3.200.000 / m2 (Sederhana/Praktis)
+  medium: 4500000,    // Rp 4.500.000 / m2 (Menengah/Modern)
+  premium: 6800000,   // Rp 6.800.000 / m2 (Premium/Luxury)
 };
 
 // Floor adjustment factor (building onto additional floors has extra costs for structures)

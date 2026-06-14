@@ -185,6 +185,61 @@ export default function GeneratorDenahView({
     onNavigate('konsultasi');
   };
 
+  // Technical scales for CAD-like Gambar Kerja fitting
+  const getRoomCADLabelAndElev = (roomId: string, name: string) => {
+    let label = name.toUpperCase();
+    let elev = "±0.00";
+    
+    if (roomId.startsWith('bedroom')) {
+      label = "K. TIDUR UTAMA";
+      elev = "±0.00";
+    } else if (roomId.startsWith('kid_room')) {
+      label = "K. TIDUR ANAK";
+      elev = "±0.00";
+    } else if (roomId.startsWith('bathroom')) {
+      label = "K. MANDI";
+      elev = "-0.05";
+    } else if (roomId.startsWith('carport')) {
+      label = "CARPORT";
+      elev = "-0.10";
+    } else if (roomId.startsWith('garden')) {
+      label = "TAMAN";
+      elev = "-0.15";
+    } else if (roomId.startsWith('kitchen')) {
+      label = "DAPUR & MAKAN";
+      elev = "-0.02";
+    } else if (roomId.startsWith('living_room')) {
+      label = "RUANG TAMU";
+      elev = "±0.00";
+    } else if (roomId.startsWith('family_room')) {
+      label = "R. KELUARGA";
+      elev = "±0.00";
+    } else if (roomId.startsWith('laundry')) {
+      label = "AREA CUCI";
+      elev = "-0.05";
+    }
+    return { label, elev };
+  };
+
+  const canvasW = 800;
+  const canvasH = 580;
+  const kopW = 160;
+  const drawAreaW = canvasW - kopW - 20; // 620px
+  const drawAreaH = canvasH - 20; // 560px
+
+  // Centered rendering coordinates inside CAD paper size
+  const drawBoxW = drawAreaW - 120; // 500px
+  const drawBoxH = drawAreaH - 120; // 440px
+
+  const scaleX = layout ? (drawBoxW / layout.lotWidth) : 40;
+  const scaleY = layout ? (drawBoxH / layout.lotLength) : 40;
+  const scaleVal = Math.min(scaleX, scaleY, 60);
+
+  const drawW = layout ? (layout.lotWidth * scaleVal) : 300;
+  const drawH = layout ? (layout.lotLength * scaleVal) : 400;
+  const startX = 10 + 60 + (drawBoxW - drawW) / 2;
+  const startY = 10 + 50 + (drawBoxH - drawH) / 2;
+
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 text-brand-black" id="floor-generator-container">
       {/* SECTION TABS FOR DEEP INTEGRATION (RAB & AI FLOOR PLAN) */}
@@ -407,79 +462,351 @@ export default function GeneratorDenahView({
               </div>
 
               {/* REAL SVG BOUNDARY CANVAS */}
-              <div className="relative w-full aspect-[4/3] bg-brand-cream/25 border-2 border-dashed border-brand-grey/20 flex flex-col items-center justify-center p-4 rounded-xs overflow-hidden" id="denah-svg-canvas">
+              <div className="relative w-full aspect-[4/3] bg-[#FCFCFA] border border-brand-black/20 flex flex-col items-center justify-center p-0 rounded-xs overflow-hidden" id="denah-svg-canvas">
                 {/* SVG Blueprint Draw */}
                 <svg
-                  viewBox={`0 0 ${layout.lotWidth * 40} ${layout.lotLength * 40}`}
-                  className="w-full max-h-full drop-shadow-md font-sans border border-brand-black/10 bg-brand-white"
+                  viewBox="0 0 800 580"
+                  className="w-full h-full font-sans bg-[#FCFCFA]"
                 >
                   {/* Outer Lot Background Grid */}
                   <defs>
-                    <pattern id="blueprint-grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f0ede8" strokeWidth="1" />
+                    <pattern id="blueprint-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ECE9E1" strokeWidth="0.6" />
                     </pattern>
                   </defs>
-                  <rect width="100%" height="100%" fill="url(#blueprint-grid)" />
+                  
+                  {/* Canvas Outer Aesthetic Frame Borders */}
+                  <rect x="5" y="5" width="790" height="570" fill="none" stroke="#1D1B18" strokeWidth="1.2" />
+                  <rect x="8" y="8" width="784" height="564" fill="url(#blueprint-grid)" stroke="#1D1B18" strokeWidth="0.5" />
 
-                  {/* Lot dimensions label */}
-                  <text x="10" y="25" fill="#9a9590" fontSize="8" letterSpacing="1" className="font-mono">
-                    (REKONSILIASI PLOT BIDANG)
-                  </text>
+                  {/* Main Drawing Boundary Box for Centered Lot Grid */}
+                  {layout && (
+                    <g>
+                      {/* Drawing the main boundary plot lot dashed lines */}
+                      <rect
+                        x={startX}
+                        y={startY}
+                        width={drawW}
+                        height={drawH}
+                        className="fill-[#FDFCFA]/40 stroke-[#1D1B18]/30 stroke-[1] stroke-dasharray-[4,4] select-none"
+                      />
 
-                  {/* Drawing packed rooms on active selected floor */}
-                  {layout.layoutResult
-                    .filter(room => room.floor === currentFloorTab)
-                    .map((room) => {
-                      const colors = getRoomColorClasses(room.id);
+                      {/* SECTION LINE A-A (Horizontal through center of lot) */}
+                      <g opacity="0.45" className="select-none">
+                        <line x1={startX - 20} y1={startY + drawH/2} x2={startX + drawW + 20} y2={startY + drawH/2} stroke="#8D8B84" strokeWidth="0.8" strokeDasharray="6,4,2,4" />
+                        
+                        {/* Left Section bubble A */}
+                        <circle cx={startX - 25} cy={startY + drawH/2} r="8" fill="#FCFCFA" stroke="#1D1B18" strokeWidth="1" />
+                        <text x={startX - 25} y={startY + drawH/2 + 2.5} textAnchor="middle" fontSize="8" fontWeight="bold" className="font-mono fill-[#1D1B18]">A</text>
+                        <path d={`M ${startX - 25} ${startY + drawH/2 - 8} L ${startX - 28} ${startY + drawH/2 - 12} L ${startX - 22} ${startY + drawH/2 - 12} Z`} fill="#1D1B18" />
+
+                        {/* Right Section bubble A */}
+                        <circle cx={startX + drawW + 25} cy={startY + drawH/2} r="8" fill="#FCFCFA" stroke="#1D1B18" strokeWidth="1" />
+                        <text x={startX + drawW + 25} y={startY + drawH/2 + 2.5} textAnchor="middle" fontSize="8" fontWeight="bold" className="font-mono fill-[#1D1B18]">A</text>
+                        <path d={`M ${startX + drawW + 25} ${startY + drawH/2 - 8} L ${startX + drawW + 22} ${startY + drawH/2 - 12} L ${startX + drawW + 28} ${startY + drawH/2 - 12} Z`} fill="#1D1B18" />
+                      </g>
+
+                      {/* SECTION LINE B-B (Vertical through center of lot) */}
+                      <g opacity="0.45" className="select-none">
+                        <line x1={startX + drawW/2} y1={startY - 20} x2={startX + drawW/2} y2={startY + drawH + 20} stroke="#8D8B84" strokeWidth="0.8" strokeDasharray="6,4,2,4" />
+                        
+                        {/* Top Section bubble B */}
+                        <circle cx={startX + drawW/2} cy={startY - 25} r="8" fill="#FCFCFA" stroke="#1D1B18" strokeWidth="1" />
+                        <text x={startX + drawW/2} y={startY - 25 + 2.5} textAnchor="middle" fontSize="8" fontWeight="bold" className="font-mono fill-[#1D1B18]">B</text>
+                        <path d={`M ${startX + drawW/2 + 8} ${startY - 25} L ${startX + drawW/2 + 12} ${startY - 28} L ${startX + drawW/2 + 12} ${startY - 22} Z`} fill="#1D1B18" />
+
+                        {/* Bottom Section bubble B */}
+                        <circle cx={startX + drawW/2} cy={startY + drawH + 25} r="8" fill="#FCFCFA" stroke="#1D1B18" strokeWidth="1" />
+                        <text x={startX + drawW/2} y={startY + drawH + 25 + 2.5} textAnchor="middle" fontSize="8" fontWeight="bold" className="font-mono fill-[#1D1B18]">B</text>
+                        <path d={`M ${startX + drawW/2 + 8} ${startY + drawH + 25} L ${startX + drawW/2 + 12} ${startY + drawH + 25 - 3} L ${startX + drawW/2 + 12} ${startY + drawH + 25 + 3} Z`} fill="#1D1B18" />
+                      </g>
+
+                      {/* TOP HORIZONTAL PERIMETER DIMENSION LINE */}
+                      <g className="font-mono text-[9px] fill-[#4D4B44] stroke-[#4D4B44]">
+                        <line x1={startX} y1={startY - 35} x2={startX + drawW} y2={startY - 35} stroke="#4D4B44" strokeWidth="0.8" />
+                        <line x1={startX} y1={startY - 35} x2={startX} y2={startY - 10} stroke="#4D4B44" strokeWidth="0.5" strokeDasharray="2,2" />
+                        <line x1={startX + drawW} y1={startY - 35} x2={startX + drawW} y2={startY - 10} stroke="#4D4B44" strokeWidth="0.5" strokeDasharray="2,2" />
+                        {/* 45 degree Architectural Ticks */}
+                        <line x1={startX - 4} y1={startY - 31} x2={startX + 4} y2={startY - 39} stroke="#1D1B18" strokeWidth="1.2" />
+                        <line x1={startX + drawW - 4} y1={startY - 31} x2={startX + drawW + 4} y2={startY - 39} stroke="#1D1B18" strokeWidth="1.2" />
+                        {/* Dimension text banner (millimeters) */}
+                        <rect x={startX + drawW/2 - 24} y={startY - 41} width="48" height="12" fill="#FCFCFA" />
+                        <text x={startX + drawW/2} y={startY - 32} textAnchor="middle" className="font-mono font-bold text-[8.5px] fill-[#1D1B18] tracking-wider">
+                          {(layout.lotWidth * 1000).toFixed(0)}
+                        </text>
+                      </g>
+
+                      {/* LEFT VERTICAL PERIMETER DIMENSION LINE */}
+                      <g className="font-mono text-[9px] fill-[#4D4B44] stroke-[#4D4B44]">
+                        <line x1={startX - 35} y1={startY} x2={startX - 35} y2={startY + drawH} stroke="#4D4B44" strokeWidth="0.8" />
+                        <line x1={startX - 35} y1={startY} x2={startX - 10} y2={startY} stroke="#4D4B44" strokeWidth="0.5" strokeDasharray="2,2" />
+                        <line x1={startX - 35} y1={startY + drawH} x2={startX - 10} y2={startY + drawH} stroke="#4D4B44" strokeWidth="0.5" strokeDasharray="2,2" />
+                        {/* Ticks */}
+                        <line x1={startX - 31} y1={startY + 4} x2={startX - 39} y2={startY - 4} stroke="#1D1B18" strokeWidth="1.2" />
+                        <line x1={startX - 31} y1={startY + drawH + 4} x2={startX - 39} y2={startY + drawH - 4} stroke="#1D1B18" strokeWidth="1.2" />
+                        {/* Dimension text label (millimeters, rotated) */}
+                        <rect x={startX - 41} y={startY + drawH/2 - 20} width="12" height="40" fill="#FCFCFA" />
+                        <text
+                          x={startX - 32}
+                          y={startY + drawH/2 + 3}
+                          textAnchor="middle"
+                          transform={`rotate(-90, ${startX - 32}, ${startY + drawH/2})`}
+                          className="font-mono font-bold text-[8.5px] fill-[#1D1B18] tracking-wider"
+                        >
+                          {(layout.lotLength * 1000).toFixed(0)}
+                        </text>
+                      </g>
+
+                      {/* North Arrow Symbol */}
+                      <g transform={`translate(${startX + drawW + 15}, ${startY + 20}) scale(0.8)`} opacity="0.75" className="select-none">
+                        <circle cx="15" cy="15" r="11" fill="none" stroke="#1D1B18" strokeWidth="0.8" />
+                        <path d="M 15,4 L 11,18 L 15,15 L 19,18 Z" fill="#1D1B18" stroke="#1D1B18" strokeWidth="0.8" />
+                        <text x="15" y="-1" textAnchor="middle" fontSize="7.5" fontWeight="bold" className="font-sans fill-[#1D1B18]">U</text>
+                      </g>
+
+                      {/* CAD SCALE MARKER BLOCK (DENAH LANTAI KOORDINASI) */}
+                      <g transform={`translate(${startX}, ${startY + drawH + 35})`} className="select-none">
+                        {/* Targets circle */}
+                        <circle cx="14" cy="14" r="11" fill="none" stroke="#1D1B18" strokeWidth="0.8" />
+                        <circle cx="14" cy="14" r="2.5" fill="#1D1B18" />
+                        <line x1="2" y1="14" x2="26" y2="14" stroke="#1D1B18" strokeWidth="0.8" />
+                        <line x1="14" y1="2" x2="14" y2="26" stroke="#1D1B18" strokeWidth="0.8" />
+                        
+                        <text x="32" y="11" className="font-sans font-extrabold text-[10.5px] uppercase tracking-wider fill-[#1D1B18]">
+                          DENAH LANTAI {currentFloorTab}
+                        </text>
+                        <line x1="32" y1="16" x2="190" y2="16" stroke="#1D1B18" strokeWidth="1.2" />
+                        <text x="32" y="25" className="font-mono text-[7px] uppercase font-bold text-[#8D8678] tracking-widest text-[#E05C38]">
+                          SKALA 1:100 (REKONSILIASI MILIMETER)
+                        </text>
+                      </g>
+
+                      {/* PACKED SPACES ROOM DRAW GROUP */}
+                      {layout.layoutResult
+                        .filter(room => room.floor === currentFloorTab)
+                        .map((room) => {
+                          const rx = startX + room.x * scaleVal;
+                          const ry = startY + room.y * scaleVal;
+                          const rw = room.width * scaleVal;
+                          const rh = room.height * scaleVal;
+                          const cadLabelAndElev = getRoomCADLabelAndElev(room.id, room.name);
+
+                          return (
+                            <g key={room.id} className="group/room">
+                              {/* DOUBLE WALL (Brickwork Representation) */}
+                              {/* Outer structural wall block (thick dark) */}
+                              <rect
+                                x={rx}
+                                y={ry}
+                                width={rw}
+                                height={rh}
+                                className="fill-[#FDFDFB] stroke-[#1D1B18] stroke-[2.2] pointer-events-auto"
+                                rx="0"
+                              />
+                              {/* Inner plaster double boundary (thin grey) */}
+                              <rect
+                                x={rx + 2.5}
+                                y={ry + 2.5}
+                                width={rw - 5}
+                                height={rh - 5}
+                                className="fill-[#F8F7F4]/40 stroke-[#AEA99B] stroke-[0.5]"
+                                rx="0"
+                              />
+
+                              {/* Concrete Column pillars at the 4 corner ends */}
+                              <rect x={rx - 2.5} y={ry - 2.5} width="5" height="5" fill="#1D1B18" stroke="#1D1B18" strokeWidth="0.2" />
+                              <rect x={rx + rw - 2.5} y={ry - 2.5} width="5" height="5" fill="#1D1B18" stroke="#1D1B18" strokeWidth="0.2" />
+                              <rect x={rx - 2.5} y={ry + rh - 2.5} width="5" height="5" fill="#1D1B18" stroke="#1D1B18" strokeWidth="0.2" />
+                              <rect x={rx + rw - 2.5} y={ry + rh - 2.5} width="5" height="5" fill="#1D1B18" stroke="#1D1B18" strokeWidth="0.2" />
+
+                              {/* Minimalist Vector Furniture Overlay (CAD style) */}
+                              {room.id.startsWith('bedroom') && (
+                                <g opacity="0.08" transform={`translate(${rx + rw/2 - 20}, ${ry + rh/2 - 22}) scale(1.0)`}>
+                                  <rect x="2" y="2" width="36" height="36" fill="none" stroke="#1D1B18" strokeWidth="1.8" />
+                                  <rect x="5" y="5" width="12" height="8" rx="1" fill="none" stroke="#1D1B18" strokeWidth="1" />
+                                  <rect x="23" y="5" width="12" height="8" rx="1" fill="none" stroke="#1D1B18" strokeWidth="1" />
+                                  <line x1="2" y1="20" x2="38" y2="20" stroke="#1D1B18" strokeWidth="1" />
+                                </g>
+                              )}
+                              {room.id.startsWith('kid_room') && (
+                                <g opacity="0.08" transform={`translate(${rx + rw/2 - 15}, ${ry + rh/2 - 20}) scale(0.85)`}>
+                                  <rect x="2" y="2" width="28" height="36" fill="none" stroke="#1D1B18" strokeWidth="1.8" />
+                                  <rect x="5" y="5" width="18" height="8" rx="1" fill="none" stroke="#1D1B18" strokeWidth="1" />
+                                  <line x1="2" y1="22" x2="30" y2="22" stroke="#1D1B18" strokeWidth="1" />
+                                </g>
+                              )}
+                              {room.id.startsWith('bathroom') && (
+                                <g opacity="0.08" transform={`translate(${rx + rw/2 - 15}, ${ry + rh/2 - 15}) scale(0.8)`}>
+                                  <rect x="5" y="2" width="20" height="7" rx="1.5" fill="none" stroke="#1D1B18" strokeWidth="1.5" />
+                                  <ellipse cx="15" cy="18" rx="7" ry="9" fill="none" stroke="#1D1B18" strokeWidth="1.5" />
+                                  <circle cx="15" cy="18" r="2.5" fill="none" stroke="#1D1B18" strokeWidth="1" />
+                                  <rect x="2" y="2" width="5" height="5" fill="none" stroke="#1D1B18" strokeWidth="1" />
+                                </g>
+                              )}
+                              {room.id.startsWith('carport') && (
+                                <g opacity="0.07" transform={`translate(${rx + rw/2 - 17}, ${ry + rh/2 - 35}) scale(0.7)`}>
+                                  <rect x="5" y="5" width="34" height="80" rx="10" fill="none" stroke="#1D1B18" strokeWidth="1.8" />
+                                  <path d="M 5,23 Q 22,20 39,23" fill="none" stroke="#1D1B18" strokeWidth="1.5" />
+                                  <rect x="9" y="28" width="26" height="20" rx="3" fill="none" stroke="#1D1B18" strokeWidth="1.2" />
+                                  <rect x="11" y="56" width="22" height="18" rx="1.5" fill="none" stroke="#1D1B18" strokeWidth="1.2" />
+                                  <circle cx="12" cy="14" r="2.5" fill="#1D1B18" />
+                                  <circle cx="30" cy="14" r="2.5" fill="#1D1B18" />
+                                </g>
+                              )}
+                              {room.id.startsWith('kitchen') && (
+                                <g opacity="0.08" transform={`translate(${rx + rw/2 - 18}, ${ry + rh/2 - 15}) scale(0.8)`}>
+                                  <path d="M 2,2 H 34 V 12 H 12 V 34 H 2 Z" fill="none" stroke="#1D1B18" strokeWidth="1.5" />
+                                  <circle cx="8" cy="7" r="3.5" fill="none" stroke="#1D1B18" strokeWidth="1" />
+                                  <circle cx="20" cy="7" r="3.5" fill="none" stroke="#1D1B18" strokeWidth="1" />
+                                  <rect x="4" y="18" width="6" height="6" fill="none" stroke="#1D1B18" strokeWidth="1" />
+                                </g>
+                              )}
+                              {room.id.startsWith('living_room') && (
+                                <g opacity="0.08" transform={`translate(${rx + rw/2 - 20}, ${ry + rh/2 - 15}) scale(0.8)`}>
+                                  <path d="M 2,2 h 36 v 10 M 34,2 v 10 M 6,2 v 10 M 2,12 h 36" fill="none" stroke="#1D1B18" strokeWidth="1.5" />
+                                  <ellipse cx="20" cy="22" rx="10" ry="5" fill="none" stroke="#1D1B18" strokeWidth="1" />
+                                </g>
+                              )}
+                              {room.id.startsWith('family_room') && (
+                                <g opacity="0.08" transform={`translate(${rx + rw/2 - 25}, ${ry + rh/2 - 18}) scale(0.8)`}>
+                                  <rect x="2" y="2" width="46" height="32" rx="2" fill="none" stroke="#1D1B18" strokeWidth="1.5" />
+                                  <path d="M 6,6 h 34 v 10 M 34,6 v 10 M 12,6 v 10" fill="none" stroke="#1D1B18" strokeWidth="1.2" />
+                                  <rect x="15" y="22" width="16" height="6" fill="none" stroke="#1D1B18" strokeWidth="1" />
+                                </g>
+                              )}
+                              {room.id.startsWith('garden') && (
+                                <g opacity="0.14" transform={`translate(${rx + 8}, ${ry + 8}) scale(0.6)`}>
+                                  <path d="M 0,10 Q 5,2 10,10 Q 15,-2 20,10 M 8,10 Q 12,4 16,10" fill="none" stroke="#2E511E" strokeWidth="1.2" />
+                                </g>
+                              )}
+
+                              {/* ANNOTATIONS (Room Name, Elevation details, and dimensions in mm) */}
+                              {/* Background blur pill behind text for extreme professional readability */}
+                              <rect
+                                x={rx + rw/2 - 34}
+                                y={ry + rh/2 - 18}
+                                width="68"
+                                height="34"
+                                fill="#FCFCFA"
+                                fillOpacity="0.8"
+                                rx="2"
+                                className="pointer-events-none select-none"
+                              />
+
+                              {/* Room Name label */}
+                              <text
+                                x={rx + rw/2}
+                                y={ry + rh/2 - 8}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                className="fill-[#1A1A18] font-bold text-[8px] sm:text-[8.5px] uppercase tracking-wider"
+                              >
+                                {cadLabelAndElev.label}
+                              </text>
+                              
+                              {/* Elevation Details */}
+                              <text
+                                x={rx + rw/2}
+                                y={ry + rh/2 + 2}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                className="fill-[#7B7669] font-mono text-[7px] font-medium"
+                              >
+                                ({cadLabelAndElev.elev})
+                              </text>
+
+                              {/* Dimension text in millimeters */}
+                              <text
+                                x={rx + rw/2}
+                                y={ry + rh/2 + 10}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                className="fill-[#E05C38] font-mono font-bold text-[7.5px]"
+                              >
+                                {(room.width * 1000).toFixed(0)} x {(room.height * 1000).toFixed(0)}
+                              </text>
+
+                              {/* Hover tooltip */}
+                              <title>
+                                {room.name}: {(room.width * room.height).toFixed(1)} m²
+                              </title>
+                            </g>
+                          );
+                        })}
+                    </g>
+                  )}
+
+                  {/* KOP GAMBAR (RIGHT-HAND TITLE BLOCK PANEL) */}
+                  <g transform="translate(630, 0)">
+                    {/* Separating major border line */}
+                    <line x1="0" y1="10" x2="0" y2="570" stroke="#1D1B18" strokeWidth="1.5" />
+                    
+                    {/* Logo & Firm Name Box */}
+                    <g transform="translate(10, 20)">
+                      <text x="70" y="20" textAnchor="middle" className="font-sans font-black text-[10.5px] tracking-[0.22em] fill-[#1D1B18]">
+                        OH ARCHITECTURE
+                      </text>
+                      <text x="70" y="32" textAnchor="middle" className="font-sans text-[7px] tracking-[0.1em] fill-[#6D6B64] font-medium lowercase italic">
+                        (studio rancang utama)
+                      </text>
+                      <line x1="10" y1="42" x2="130" y2="42" stroke="#1D1B18" strokeWidth="1.2" />
+                    </g>
+
+                    {/* Proyek Phase Stamp */}
+                    <g transform="translate(10, 75)">
+                      <rect x="15" y="0" width="110" height="20" fill="#1D1B18" />
+                      <text x="70" y="13" textAnchor="middle" className="font-sans font-black text-[8px] tracking-[0.15em] fill-[#FCFCFA]">
+                        GAMBAR KERJA
+                      </text>
+                    </g>
+
+                    {/* Metadata Specs Rows */}
+                    <g transform="translate(10, 115)" className="font-sans text-[8px]">
+                      {/* NAMA PROYEK */}
+                      <text x="10" y="10" className="font-bold fill-[#8D8B84] uppercase tracking-wider">PROYEK / LOKASI:</text>
+                      <text x="10" y="22" className="font-semibold fill-[#1D1B18] text-[9.5px]">RESIDENSI TROPIS MINIMALIS</text>
+                      <text x="10" y="32" className="fill-brand-grey text-[7px] tracking-wide font-medium">Lahan {layout ? layout.totalLotArea : landArea} m² · {floors} Lantai</text>
+                      <line x1="10" y1="40" x2="130" y2="40" stroke="#E3E1D9" strokeWidth="0.8" />
+
+                      {/* NAMA GAMBAR */}
+                      <text x="10" y="55" className="font-bold fill-[#8D8B84] uppercase tracking-wider">NAMA GAMBAR:</text>
+                      <text x="10" y="67" className="font-black fill-[#E05C38] text-[9.5px]">DENAH LANTAI {currentFloorTab}</text>
+                      <line x1="10" y1="75" x2="130" y2="75" stroke="#E3E1D9" strokeWidth="0.8" />
+
+                      {/* ARSITEK PENELITI */}
+                      <text x="10" y="90" className="font-bold fill-[#8D8B84] uppercase tracking-wider">ARSITEK PENELITI:</text>
+                      <text x="10" y="102" className="font-semibold fill-[#1D1B18] text-[9.5px]">OH DESIGN SYSTEM</text>
+                      <line x1="10" y1="110" x2="130" y2="110" stroke="#E3E1D9" strokeWidth="0.8" />
+
+                      {/* SHEET DETAILS */}
+                      <text x="10" y="125" className="font-bold fill-[#8D8B84] uppercase tracking-wider">SKALA:</text>
+                      <text x="10" y="137" className="font-mono font-bold fill-[#1D1B18] text-[9.5px]">1 : 100</text>
                       
-                      // Map custom coordinates to SVG scale (grid multiplier x40)
-                      const rx = room.x * 40;
-                      const ry = room.y * 40;
-                      const rw = room.width * 40;
-                      const rh = room.height * 40;
+                      <text x="10" y="152" className="font-bold fill-[#8D8B84] uppercase tracking-wider">NO. LEMBAR:</text>
+                      <text x="10" y="167" className="font-mono font-black fill-[#E05C38] text-[13px]">AR-0{currentFloorTab}</text>
+                      <line x1="10" y1="180" x2="130" y2="180" stroke="#1D1B18" strokeWidth="1" />
+                    </g>
 
-                      return (
-                        <g key={room.id} className="group/room">
-                          <rect
-                            x={rx}
-                            y={ry}
-                            width={rw}
-                            height={rh}
-                            className={`${colors.fill} ${colors.stroke} stroke-[1.5] transition-all duration-300 pointer-events-auto`}
-                            rx="2"
-                          />
-                          {/* Room dimensions labels */}
-                          <text
-                            x={rx + rw / 2}
-                            y={ry + rh / 2 - 2}
-                            textAnchor="middle"
-                            dominantBaseline="middle"
-                            className={`${colors.text} font-bold text-[8px] sm:text-[9px] uppercase tracking-wider`}
-                          >
-                            {room.name}
-                          </text>
-                          <text
-                            x={rx + rw / 2}
-                            y={ry + rh / 2 + 10}
-                            textAnchor="middle"
-                            dominantBaseline="middle"
-                            className="fill-brand-dark-grey/65 font-mono text-[7px]"
-                          >
-                            {room.width.toFixed(1)}m x {room.height.toFixed(1)}m
-                          </text>
-
-                          {/* Hover Overlay Guide showing area */}
-                          <title>
-                            {room.name}: {(room.width * room.height).toFixed(1)} m²
-                          </title>
-                        </g>
-                      );
-                    })}
+                    {/* Notes & Standard Guidelines */}
+                    <g transform="translate(10, 310)" className="font-sans text-[7.2px] fill-[#7D7B74] leading-relaxed">
+                      <text x="10" y="10" className="font-bold fill-[#1D1B18] uppercase tracking-widest text-[8px]">CATATAN UTAMA:</text>
+                      <text x="10" y="25">1. Catatan dimensi adalah milimeter.</text>
+                      <text x="10" y="37">2. Jangan ukur langsung skala gambar,</text>
+                      <text x="10" y="47">   selalu acu pada nilai numerik tertulis.</text>
+                      <text x="10" y="57">3. Seluruh detail perancangan mematuhi</text>
+                      <text x="10" y="67">   perda koefisien dasar bangunan (KDB).</text>
+                      
+                      {/* Stamp Area */}
+                      <rect x="10" y="85" width="120" height="50" rx="3" fill="none" stroke="#E05C38" strokeWidth="0.8" strokeDasharray="3,3" />
+                      <text x="70" y="105" textAnchor="middle" className="font-serif font-black text-[9.5px] fill-[#E05C38] tracking-widest">APPROVED</text>
+                      <text x="70" y="118" textAnchor="middle" className="font-mono text-[5.8px] fill-[#E05C38] tracking-wider">OH PARTNERS COMMITTEE</text>
+                    </g>
+                  </g>
                 </svg>
 
                 {/* SVG SCALE CAPTION */}
-                <span className="absolute bottom-6 right-6 font-mono text-[9px] text-brand-grey tracking-wider uppercase bg-brand-white/80 border border-brand-black/5 px-2 py-0.5 whitespace-nowrap">
-                  Skala Visual Props · 1m : 40px
+                <span className="absolute bottom-6 left-6 font-mono text-[9px] text-brand-grey tracking-wider uppercase bg-brand-white/90 border border-brand-black/5 px-2 py-0.5 whitespace-nowrap">
+                  Paper Size: A3 (CAD Scaled) · Dimensi: Milimeter (mm)
                 </span>
               </div>
 

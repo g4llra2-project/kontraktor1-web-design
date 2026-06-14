@@ -24,6 +24,7 @@ export default function KalkulatorRabView({ onCompleteEstimate, onNavigate, init
   const [floors, setFloors] = useState<number>(initialInput?.floors || 1);
   const [specification, setSpecification] = useState<'standard' | 'medium' | 'premium'>(initialInput?.specification || 'medium');
   const [selectedAddons, setSelectedAddons] = useState<string[]>(initialInput?.addons || []);
+  const [executionMethod, setExecutionMethod] = useState<'contractor' | 'swakelola'>('contractor');
 
   // Validation state
   const [validationError, setValidationError] = useState('');
@@ -76,7 +77,8 @@ export default function KalkulatorRabView({ onCompleteEstimate, onNavigate, init
     );
   };
 
-  const calculateRAB = () => {
+  const calculateRAB = (methodOverride?: 'contractor' | 'swakelola') => {
+    const activeMethod = methodOverride || executionMethod;
     const area = parseFloat(areaSqm);
     const baseRate = PRICE_PER_SQM[specification];
     const floorFactor = FLOOR_MULTIPLIERS[floors] ?? 1.35;
@@ -87,6 +89,11 @@ export default function KalkulatorRabView({ onCompleteEstimate, onNavigate, init
     // Apply discount for renovation model
     if (buildingType === 'renovation') {
       baseCost = baseCost * RENOVATION_MULTIPLIER;
+    }
+
+    // Apply discount for Swakelola method (18% savings over standard professional contractor rates)
+    if (activeMethod === 'swakelola') {
+      baseCost = baseCost * 0.82;
     }
 
     // Addons cost calculation
@@ -114,7 +121,9 @@ export default function KalkulatorRabView({ onCompleteEstimate, onNavigate, init
       estimatedMin,
       estimatedMax,
       breakdown,
-      disclaimer: 'Estimasi RAB di atas dihitung secara sistematis berbasis standar koefisien material umum Indonesia. Angka ini merupakan estimasi budget awal (bukan penawaran resmi kerja) untuk dasar konsultasi dan perancangan denah berikutnya. Silakan hubungi tim kami untuk survey lahan, penentuan struktur tanah, dan pengajuan penawaran resmi kontraktor.',
+      disclaimer: activeMethod === 'swakelola'
+        ? 'Estimasi RAB di atas diset menggunakan tarif Swakelola Mandiri (lebih hemat ~18% karena Anda mengoordinasikan pengadaan material dan tukang sipil harian secara mandiri tanpa pihak Kontraktor Utama). Tanggung jawab koordinasi K3, keamanan struktur, dan garansi material sepenuhnya dipikul sendiri oleh pemilik lahan.'
+        : 'Estimasi RAB di atas dihitung dengan standar pengawasan sipil penuh dari Kontraktor Mitra Bergaransi. Harga mencakup personil pengawas profesional lapangan harian, standar sanitasi K3, jaminan kepatuhan cetak biru Arsitektur, serta garansi kebocoran gubahan ruang penuh selama 12 bulan.',
     };
 
     setCalculatedResult(result);
@@ -125,6 +134,11 @@ export default function KalkulatorRabView({ onCompleteEstimate, onNavigate, init
     setStep(5); // Switch to Results view
   };
 
+  const handleExecutionMethodChange = (method: 'contractor' | 'swakelola') => {
+    setExecutionMethod(method);
+    calculateRAB(method);
+  };
+
   const resetCalculator = () => {
     setStep(1);
     setBuildingType('new');
@@ -132,6 +146,7 @@ export default function KalkulatorRabView({ onCompleteEstimate, onNavigate, init
     setFloors(1);
     setSpecification('medium');
     setSelectedAddons([]);
+    setExecutionMethod('contractor');
     setCalculatedResult(null);
     setValidationError('');
   };
@@ -575,6 +590,117 @@ export default function KalkulatorRabView({ onCompleteEstimate, onNavigate, init
                 <span>Tinggi: {floors} Lantai</span>
                 <span>•</span>
                 <span>Grade: {specification.toUpperCase()}</span>
+                <span>•</span>
+                <span>Metode: {executionMethod === 'contractor' ? 'Kontraktor Utama' : 'Swakelola / Tukang'}</span>
+              </div>
+            </div>
+
+            {/* METODE EKSEKUSI TOGGLING CHIPS */}
+            <div className="border border-brand-black/10 bg-brand-cream/15 p-6 rounded-xs space-y-4">
+              <div>
+                <span className="text-[10px] uppercase tracking-[0.18em] text-brand-orange font-bold font-sans block mb-1">
+                  // Opsi Metode Pembangunan & Eksekusi Lapangan
+                </span>
+                <h4 className="font-serif text-lg text-brand-black">
+                  Metode ini mempengaruhi total biaya konstruksi. Pilih yang sesuai kesiapan Anda:
+                </h4>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button
+                  type="button"
+                  onClick={() => handleExecutionMethodChange('contractor')}
+                  className={`flex flex-col text-left p-4 border rounded-xs transition-all ${
+                    executionMethod === 'contractor'
+                      ? 'border-brand-orange bg-brand-orange/5 ring-1 ring-brand-orange'
+                      : 'border-brand-black/10 bg-brand-white hover:border-brand-black'
+                  }`}
+                >
+                  <div className="flex justify-between items-baseline mb-1">
+                    <span className="text-xs font-semibold text-brand-black uppercase tracking-wider">
+                      Kontraktor Mitra (Saran - Full Garansi)
+                    </span>
+                    <span className="text-[10px] font-mono text-brand-orange font-bold">(Tarif Standar)</span>
+                  </div>
+                  <p className="text-[11px] text-brand-dark-grey leading-relaxed">
+                    Pengawasan profesional harian harian, menjamin ketepatan struktur beton, gambar kerja bersertifikasi legal, keselamatan kerja harian (K3), koordinasi material pabrikan bergaransi, dan jaminan pengerjaan struktur 12 bulan penuh.
+                  </p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleExecutionMethodChange('swakelola')}
+                  className={`flex flex-col text-left p-4 border rounded-xs transition-all ${
+                    executionMethod === 'swakelola'
+                      ? 'border-brand-orange bg-brand-orange/5 ring-1 ring-brand-orange'
+                      : 'border-brand-black/10 bg-brand-white hover:border-brand-black'
+                  }`}
+                >
+                  <div className="flex justify-between items-baseline mb-1">
+                    <span className="text-xs font-semibold text-brand-black uppercase tracking-wider">
+                      Swakelola Mandiri (Tukang Lokal / Hemat)
+                    </span>
+                    <span className="text-[10px] font-mono text-brand-green font-bold">(-18% Lebih Hemat)</span>
+                  </div>
+                  <p className="text-[11px] text-brand-dark-grey leading-relaxed">
+                    Anda mengoordinasikan pengadaan material bangunan harian sendiri, membayar jasa mandor & tukang sipil setempat secara harian. Mengeliminasi jasa komisi manajemen kontraktor pelaksana utama.
+                  </p>
+                </button>
+              </div>
+            </div>
+
+            {/* FORMULA TRANSPARENT CALCULATION TABLE */}
+            <div className="border border-brand-black/10 bg-brand-white p-6 rounded-xs space-y-4">
+              <h3 className="font-serif text-base font-medium text-brand-black border-b border-brand-black/10 pb-3 flex justify-between items-center">
+                <span>Transparansi Rumus &amp; Parameter Perhitungan</span>
+                <span className="text-[9px] font-mono uppercase text-[#7A7870] tracking-wider font-bold">// RAB Formula</span>
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-xs text-brand-dark-grey leading-relaxed">
+                <div className="space-y-3">
+                  <div className="p-4 bg-[#EDEAE3]/40 rounded-sm">
+                    <span className="text-[10px] uppercase font-semibold text-[#1A1A18] tracking-wider block font-sans mb-1">Rumus Standar Pekerjaan Sipil:</span>
+                    <code className="block font-mono text-[11px] text-[#E05C38] leading-normal pt-1 break-all bg-white p-2 rounded-xs border border-brand-black/5">
+                      RAB = (Luas × Tarif M² × Multiplier Lantai × Multiplier Jenis × Multiplier Metode) + Fasilitas Ekstra
+                    </code>
+                  </div>
+                  <p className="text-[11px] text-[#7A7870] font-sans">
+                    Koefisien di atas dihitung berdasarkan rata-rata indeks indeks harga material SNI (Standar Nasional Indonesia) yang dimutakhirkan dengan faktor kesulitan kerja harian.
+                  </p>
+                </div>
+
+                <div className="space-y-2 font-mono text-[11px]">
+                  <div className="flex justify-between py-1 border-b border-brand-black/5">
+                    <span>Luas Bangunan Riil</span>
+                    <span className="text-brand-black font-semibold">{areaSqm} m²</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-brand-black/5">
+                    <span>Tarif per m² (Grade {specification.toUpperCase()})</span>
+                    <span className="text-brand-black font-semibold">{formatIDR(PRICE_PER_SQM[specification])}</span>
+                  </div>
+                  <div className="flex justify-between py-1 border-b border-brand-black/5">
+                    <span>Koefisien Lantai ({floors} Lantai)</span>
+                    <span className="text-brand-black font-semibold font-bold">x {FLOOR_MULTIPLIERS[floors] ?? 1.35}</span>
+                  </div>
+                  {buildingType === 'renovation' && (
+                    <div className="flex justify-between py-1 border-b border-brand-black/5 text-[#E05C38]">
+                      <span>Koefisien Renovasi (Hemat Struktur)</span>
+                      <span className="font-bold">x {RENOVATION_MULTIPLIER}</span>
+                    </div>
+                  )}
+                  {executionMethod === 'swakelola' && (
+                    <div className="flex justify-between py-1 border-b border-brand-black/5 text-brand-green">
+                      <span>Koefisien Swakelola Mandiri (-18%)</span>
+                      <span className="font-bold">x 0.82</span>
+                    </div>
+                  )}
+                  {selectedAddons.length > 0 && (
+                    <div className="flex justify-between py-1 border-b border-[#D6D2C8] text-brand-grey pt-1">
+                      <span>Fasilitas Eksternal Mandiri ({selectedAddons.length} item)</span>
+                      <span className="text-brand-black font-semibold">+{formatIDR(selectedAddons.reduce((sum, k) => sum + (ADDON_COSTS[k]?.cost || 0), 0))}</span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -631,6 +757,7 @@ export default function KalkulatorRabView({ onCompleteEstimate, onNavigate, init
             {/* INTERACTIVE NAVIGATION PATH RAILS */}
             <div className="flex flex-col sm:flex-row gap-5 items-stretch bg-transparent pt-4">
               <button
+                type="button"
                 onClick={resetCalculator}
                 className="flex-1 border border-brand-black/15 text-brand-black hover:border-brand-black hover:bg-brand-cream/10 py-4 text-xs font-semibold uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 rounded-none"
                 id="btn-recalculate-rab"
@@ -639,6 +766,7 @@ export default function KalkulatorRabView({ onCompleteEstimate, onNavigate, init
               </button>
 
               <button
+                type="button"
                 onClick={() => onNavigate('generator-denah')}
                 className="flex-1 bg-brand-black text-brand-white hover:bg-brand-orange-hover hover:text-brand-white py-4 text-xs font-semibold uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 rounded-none"
                 id="btn-go-to-denah"
@@ -647,6 +775,7 @@ export default function KalkulatorRabView({ onCompleteEstimate, onNavigate, init
               </button>
 
               <button
+                type="button"
                 onClick={() => onNavigate('konsultasi')}
                 className="flex-1 bg-brand-orange text-brand-white hover:bg-brand-orange-hover py-4 text-xs font-semibold uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 rounded-none"
                 id="btn-go-to-konsultasi"
