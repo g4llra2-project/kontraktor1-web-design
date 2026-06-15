@@ -13,7 +13,6 @@ import WorksView from './components/views/WorksView';
 import StudioView from './components/views/StudioView';
 import ProcessView from './components/views/ProcessView';
 import KalkulatorRabView from './components/views/KalkulatorRabView';
-import GeneratorDenahView from './components/views/GeneratorDenahView';
 import KonsultasiView from './components/views/KonsultasiView';
 import EnquiryDrawer from './components/layout/EnquiryDrawer';
 
@@ -33,6 +32,10 @@ export default function App() {
 
   // Reset scroll index to zero upon active screen transitions (fixes iframe scrolling offsets)
   useEffect(() => {
+    if (currentView === 'generator-denah') {
+      setCurrentView('kalkulator-rab');
+      return;
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentView]);
 
@@ -120,17 +123,9 @@ export default function App() {
             {currentView === 'kalkulator-rab' && (
               <KalkulatorRabView
                 onCompleteEstimate={handleCompleteEstimate}
-                onNavigate={handleNavigate}
-                initialInput={rabData?.input}
-              />
-            )}
-
-            {currentView === 'generator-denah' && (
-              <GeneratorDenahView
                 onCompleteFloorPlan={handleCompleteFloorPlan}
                 onNavigate={handleNavigate}
-                initialRabArea={rabData?.input.areaSqm}
-                initialRabFloors={rabData?.input.floors}
+                initialInput={rabData?.input}
               />
             )}
 

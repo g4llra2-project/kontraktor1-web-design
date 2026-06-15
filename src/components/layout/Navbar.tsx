@@ -31,7 +31,7 @@ export default function Navbar({ currentView, onNavigate, onOpenEnquiry }: Navba
     { id: 'works', label: 'Karya' },
     { id: 'studio', label: 'Studio' },
     { id: 'process', label: 'Alur Kerja' },
-    { id: 'kalkulator-rab', label: 'Kalkulator RAB' },
+    { id: 'kalkulator-rab', label: 'RAB & Denah AI' },
   ] as const;
 
   const handleLinkClick = (id: ViewPath) => {
