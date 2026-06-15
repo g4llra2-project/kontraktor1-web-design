@@ -465,6 +465,43 @@ export default function CmsAdminView({ onNavigate }: CmsAdminViewProps) {
                     className="w-full text-xs font-sans p-3 border border-[#D6D2C8] bg-brand-white focus:border-brand-orange focus:outline-none"
                   />
                 </div>
+
+                {/* MEDIA VISUAL BACKGROUND BERANDA (HOMEPAGE IMAGES) */}
+                <div className="md:col-span-2 pt-4 border-t border-[#D6D2C8] mt-4 space-y-4">
+                  <h3 className="text-sm font-serif text-[#1A1A18] font-normal tracking-tight">Media Gambar Beranda (Homepage Images)</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5 md:col-span-2">
+                      <label className="text-[9px] uppercase font-bold tracking-wider text-[#A8A49C] block">Gambar Studi Elevasi Residensial (Quote Section)</label>
+                      <input
+                        type="text"
+                        value={generalSettings.homeElevasiImageUrl || ''}
+                        onChange={(e) => setGeneralSettings({ ...generalSettings, homeElevasiImageUrl: e.target.value })}
+                        placeholder="https://images.unsplash.com/..."
+                        className="w-full text-xs font-sans px-3 py-2.5 border border-[#D6D2C8] bg-brand-white focus:border-brand-orange focus:outline-none"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[9px] uppercase font-bold tracking-wider text-[#A8A49C] block">Gambar Alur Panduan Proses Brief (Beranda)</label>
+                      <input
+                        type="text"
+                        value={generalSettings.homeProcessBriefImageUrl || ''}
+                        onChange={(e) => setGeneralSettings({ ...generalSettings, homeProcessBriefImageUrl: e.target.value })}
+                        placeholder="https://images.unsplash.com/..."
+                        className="w-full text-xs font-sans px-3 py-2.5 border border-[#D6D2C8] bg-brand-white focus:border-brand-orange focus:outline-none"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[9px] uppercase font-bold tracking-wider text-[#A8A49C] block">Gambar Testimonial Pemilik Carmen (Beranda)</label>
+                      <input
+                        type="text"
+                        value={generalSettings.homeTestimonialImageUrl || ''}
+                        onChange={(e) => setGeneralSettings({ ...generalSettings, homeTestimonialImageUrl: e.target.value })}
+                        placeholder="https://images.unsplash.com/..."
+                        className="w-full text-xs font-sans px-3 py-2.5 border border-[#D6D2C8] bg-brand-white focus:border-brand-orange focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="pt-6 border-t border-[#D6D2C8] flex justify-end">
@@ -957,6 +994,33 @@ export default function CmsAdminView({ onNavigate }: CmsAdminViewProps) {
                       className="w-full text-xs font-sans p-2.5 border border-[#D6D2C8]"
                     />
                   </div>
+
+                  {/* ARSITEKTUR MEDIA VISUAL (STUDIO IMAGES) */}
+                  <div className="md:col-span-2 pt-4 border-t border-[#D6D2C8] mt-4 space-y-3">
+                    <h4 className="text-[10px] uppercase font-bold tracking-wider text-brand-orange font-mono">✦ ARSITEKTUR MEDIA VISUAL (STUDIO IMAGES)</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="text-[9px] uppercase font-bold text-brand-dark-grey block">Gambar Kolom Kiri - Eksplorasi Ruang</label>
+                        <input
+                          type="text"
+                          value={studioHeader.studioExplorasiImageUrl || ''}
+                          onChange={(e) => setStudioHeader({ ...studioHeader, studioExplorasiImageUrl: e.target.value })}
+                          className="w-full text-xs font-sans px-2.5 py-1.5 border border-[#D6D2C8] bg-brand-white focus:border-brand-orange focus:outline-none"
+                          placeholder="https://images.unsplash.com/..."
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[9px] uppercase font-bold text-brand-dark-grey block">Gambar Diagonal Kanan - Detil Kejujuran Material</label>
+                        <input
+                          type="text"
+                          value={studioHeader.studioDetailImageUrl || ''}
+                          onChange={(e) => setStudioHeader({ ...studioHeader, studioDetailImageUrl: e.target.value })}
+                          className="w-full text-xs font-sans px-2.5 py-1.5 border border-[#D6D2C8] bg-brand-white focus:border-brand-orange focus:outline-none"
+                          placeholder="https://images.unsplash.com/..."
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -1067,13 +1131,25 @@ export default function CmsAdminView({ onNavigate }: CmsAdminViewProps) {
                     />
                   </div>
 
-                  <div className="space-y-1.5">
+                  <div className="space-y-1.5 grayscale-0">
                     <label className="text-[9px] uppercase font-bold text-brand-dark-grey block">Paragraf Pengenalan 2</label>
                     <textarea
                       rows={3}
                       value={processIntro.desc2}
                       onChange={(e) => setProcessIntro({ ...processIntro, desc2: e.target.value })}
                       className="w-full text-xs font-sans p-2.5 border border-[#D6D2C8]"
+                    />
+                  </div>
+
+                  {/* PROCESS COLLABORATION IMAGE */}
+                  <div className="space-y-1.5 md:col-span-2">
+                    <label className="text-[9px] uppercase font-bold text-brand-dark-grey block">URL Gambar Ilustrasi Kolaborasi Samping (Process Intro Image)</label>
+                    <input
+                      type="text"
+                      value={processIntro.imageUrl || ''}
+                      onChange={(e) => setProcessIntro({ ...processIntro, imageUrl: e.target.value })}
+                      className="w-full text-xs font-sans px-2.5 py-1.5 border border-[#D6D2C8] bg-brand-white focus:border-brand-orange focus:outline-none"
+                      placeholder="https://images.unsplash.com/..."
                     />
                   </div>
                 </div>
@@ -1308,6 +1384,53 @@ export default function CmsAdminView({ onNavigate }: CmsAdminViewProps) {
                       </div>
                     );
                   })}
+                </div>
+              </div>
+
+              {/* RAB STYLE PREVIEW IMAGES */}
+              <div className="bg-[#FAF9F5] border border-[#D6D2C8] p-5 rounded-xs space-y-4">
+                <span className="text-[10px] uppercase font-bold text-brand-orange font-mono block">✦ GAMBAR ILUSTRASI FASAD RENDER PERSPEKTIF AI (STYLE PREVIEWS)</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[9px] uppercase font-bold text-brand-dark-grey block">Minimalis Modern (Preview Image URL)</label>
+                    <input
+                      type="text"
+                      value={rabConfig.styleMinimalistImg || ''}
+                      onChange={(e) => setRabConfig({ ...rabConfig, styleMinimalistImg: e.target.value })}
+                      className="w-full text-xs font-sans px-2.5 py-1.5 border border-[#D6D2C8] bg-brand-white"
+                      placeholder="https://images.unsplash.com/..."
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] uppercase font-bold text-brand-dark-grey block">Tropis Modern (Preview Image URL)</label>
+                    <input
+                      type="text"
+                      value={rabConfig.styleTropicalImg || ''}
+                      onChange={(e) => setRabConfig({ ...rabConfig, styleTropicalImg: e.target.value })}
+                      className="w-full text-xs font-sans px-2.5 py-1.5 border border-[#D6D2C8] bg-brand-white"
+                      placeholder="https://images.unsplash.com/..."
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] uppercase font-bold text-brand-dark-grey block">Industrial Kontemporer (Preview Image URL)</label>
+                    <input
+                      type="text"
+                      value={rabConfig.styleIndustrialImg || ''}
+                      onChange={(e) => setRabConfig({ ...rabConfig, styleIndustrialImg: e.target.value })}
+                      className="w-full text-xs font-sans px-2.5 py-1.5 border border-[#D6D2C8] bg-brand-white"
+                      placeholder="https://images.unsplash.com/..."
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] uppercase font-bold text-brand-dark-grey block">Klasik Modern (Preview Image URL)</label>
+                    <input
+                      type="text"
+                      value={rabConfig.styleClassicImg || ''}
+                      onChange={(e) => setRabConfig({ ...rabConfig, styleClassicImg: e.target.value })}
+                      className="w-full text-xs font-sans px-2.5 py-1.5 border border-[#D6D2C8] bg-brand-white"
+                      placeholder="https://images.unsplash.com/..."
+                    />
+                  </div>
                 </div>
               </div>
 

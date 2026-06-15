@@ -10,7 +10,7 @@ import { ArrowUpRight, ArrowDown, Shield, Compass, CircleDollarSign, PencilRuler
 import gsap from 'gsap';
 import ThreeInteractiveCanvas from '../ThreeInteractiveCanvas';
 import NextImage from '../NextImage';
-import { getHeroSlides, getEthicsTabs, getWorksProjects } from '../../lib/cmsData';
+import { getHeroSlides, getEthicsTabs, getWorksProjects, getGeneralSettings, getStudioHeader, getProcessIntro } from '../../lib/cmsData';
 
 interface HomeViewProps {
   onNavigate: (view: ViewPath) => void;
@@ -27,6 +27,9 @@ export default function HomeView({ onNavigate, onOpenEnquiry }: HomeViewProps) {
   // Dynamic CMS-controlled state loaders
   const [heroSlides] = useState(() => getHeroSlides());
   const [ethicsTabs] = useState(() => getEthicsTabs());
+  const [settings] = useState(() => getGeneralSettings());
+  const [studioHeader] = useState(() => getStudioHeader());
+  const [processIntro] = useState(() => getProcessIntro());
   const [selectedWorks] = useState(() => {
     const cmsProjects = getWorksProjects();
     // Map list to selected works expected keys
@@ -497,7 +500,7 @@ export default function HomeView({ onNavigate, onOpenEnquiry }: HomeViewProps) {
           {/* Background Image with stable render formatted for NextJS */}
           <div className="absolute inset-0 scale-100 pointer-events-none group-hover:scale-105 transition-transform duration-700 z-0">
             <NextImage 
-              src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80"
+              src={settings.homeElevasiImageUrl || "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80"}
               alt="Studi Elevasi Residensial"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
@@ -517,7 +520,7 @@ export default function HomeView({ onNavigate, onOpenEnquiry }: HomeViewProps) {
           <div className="flex flex-col gap-3 relative z-20 py-12 px-8 md:px-12">
             <span className="h-0.5 w-12 bg-brand-orange" />
             <blockquote className="font-serif italic text-lg sm:text-xl md:text-2xl text-white leading-snug font-light">
-              "Kombinasi geometri arsitektural yang bersahaja dengan pemanfaatan ubin tanah liat lokal, tiang batu utuh, serta jalur cahaya alami yang tenang."
+              "{studioHeader.quoteText || "Kombinasi geometri arsitektural yang bersahaja dengan pemanfaatan ubin tanah liat lokal, tiang batu utuh, serta jalur cahaya alami yang tenang."}"
             </blockquote>
           </div>
 
@@ -656,7 +659,7 @@ export default function HomeView({ onNavigate, onOpenEnquiry }: HomeViewProps) {
               {/* Clean Background Image wrapped for NextJS */}
               <div className="absolute inset-0 scale-100 pointer-events-none transition-transform duration-700 group-hover:scale-105 z-0">
                 <NextImage 
-                  src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80"
+                  src={settings.homeProcessBriefImageUrl || "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80"}
                   alt="Alur Panduan Proses Kerja"
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -702,11 +705,11 @@ export default function HomeView({ onNavigate, onOpenEnquiry }: HomeViewProps) {
       <section className="relative overflow-hidden bg-brand-white" id="section-home-testimonial">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-0 border-b border-brand-black/10">
           
-          <div className="lg:col-span-5 h-[340px] lg:h-auto min-h-[340px] relative flex flex-col justify-end p-8 overflow-hidden border-r border-[#D6D2C8] bg-neutral-900 group">
+          <div className="lg:col-span-5 h-[340px] lg:h-auto min-h-[340px] relative flex flex-col justify-end p-8 overflow-hidden border-r border-[#D6D2D8] bg-neutral-900 group">
             {/* Clean Background Image wrapped for NextJS */}
             <div className="absolute inset-0 scale-100 pointer-events-none transition-transform duration-700 group-hover:scale-105 z-0">
               <NextImage 
-                src="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80"
+                src={settings.homeTestimonialImageUrl || "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80"}
                 alt="Testimonial Pemilik Hunian Carmen"
                 fill
                 sizes="(max-width: 768px) 100vw, 40vw"

@@ -39,6 +39,17 @@ export interface CmsStudioHeader {
   philosophyMain: string;
   philosophyDesc1: string;
   philosophyDesc2: string;
+
+  // Render properties for StudioView.tsx compatibility
+  eyebrow?: string;
+  heading?: string;
+  narrativeSubtitle?: string;
+  aboutHeading?: string;
+  aboutText?: string;
+
+  // Custom visual background assets
+  studioExplorasiImageUrl?: string;
+  studioDetailImageUrl?: string;
 }
 
 export interface CmsTeamMember {
@@ -65,6 +76,12 @@ export interface CmsProcessIntro {
   imageUrl: string;
   imageTag: string;
   imageDesc: string;
+
+  // Render properties for ProcessView.tsx compatibility
+  eyebrow?: string;
+  heading?: string;
+  para1?: string;
+  para2?: string;
 }
 
 export interface CmsProcessStage {
@@ -179,7 +196,14 @@ export const DEFAULT_STUDIO_HEADER: CmsStudioHeader = {
   philosophyTitle: 'Kesetimbangan Intuisi Arsitektural serta Tanggapan Iklim Khas Tapak.',
   philosophyMain: 'Etos perancangan kami berakar kuat pada nilai-nilai desain pasif tropis, perencanaan ruang yang cermat, dan sirkulasi alur yang intuitif.',
   philosophyDesc1: 'Kami membidani setiap rancangan dengan tekad melerai kerumitan hidup harian — menyuguhkan kenyamanan dan kejujuran bentuk melalui ruang yang fungsional sekaligus anggun.',
-  philosophyDesc2: 'Di OH Architecture, kami meyakini bahwa arsitektur yang bernilai adalah perwujudan selaras antara manusia dan tapak tempatnya berpijak, keserasian wujud dan kegunaan, serta kecocokan visi masa depan dengan karakter materialitas natural.'
+  philosophyDesc2: 'Di OH Architecture, kami meyakini bahwa arsitektur yang bernilai adalah perwujudan selaras antara manusia dan tapak tempatnya berpijak, keserasian wujud dan kegunaan, serta kecocokan visi masa depan dengan karakter materialitas natural.',
+  eyebrow: '// JATI KREATIF & SOSOK ESTETIKA',
+  heading: 'Mendengarkan Keinginan, Menggubah Ruang Hidup',
+  narrativeSubtitle: 'Arsitektur adalah jembatan intuisi antara keasrian tapak, kebutuhan harian huni, dan keindahan fungsional bioklimatik.',
+  aboutHeading: 'Di OH, kami mendengar dahulu, merancang kemudian.',
+  aboutText: 'Kami percaya arsitektur seharusnya merupakan proses kolaboratif yang inklusif dan menyenangkan. Tim desainer kami membimbing Anda sepanjang perjalanan, mencocokkan respon iklim tropis yang fungsional dengan kehalusan struktural kelas atas.\nKami tidak memaksakan ego personal arsitek, melainkan mendampingi impian Anda menjadi kenyataan nyata. Dengan mendalami kebiasaan keseharian, keunikan lahan, serta target batas anggaran Anda, kami menggubah rumah bernilai tinggi yang nyaman ditinggali selamanya.',
+  studioExplorasiImageUrl: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1000&q=80',
+  studioDetailImageUrl: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1200&q=80',
 };
 
 export const DEFAULT_TEAM_MEMBERS: CmsTeamMember[] = [
@@ -272,7 +296,11 @@ export const DEFAULT_PROCESS_INTRO: CmsProcessIntro = {
   desc2: 'Transparansi diutamakan sejak langkah awal. Kami menyusun estimasi alokasi biaya, jadwal rekayasa dinamis, serta pedoman keterandalan struktur sipil secara rinci, melerai keraguan konstruktif demi ketenangan hati proyek Anda.',
   imageUrl: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80',
   imageTag: 'Diskusi Tapak',
-  imageDesc: 'Interaksi intim memetakan kebutuhan unik ruangan bernapas.'
+  imageDesc: 'Interaksi intim memetakan kebutuhan unik ruangan bernapas.',
+  eyebrow: '// ALUR PERJALANAN RANCANG',
+  heading: 'Enam Tahapan Mewujudkan Rumah Tropis Ideal Anda',
+  para1: 'Kami mengawal dan mendampingi rencana pembangunan Anda secara jujur di setiap jenjang perancangan — mulai dari sketsa goresan pensil pertama hingga serah terima kunci fisik bangunan yang matang terhadap tantangan iklim tropis setempat.',
+  para2: 'Transparansi diutamakan sejak langkah awal. Kami menyusun estimasi alokasi biaya, jadwal rekayasa dinamis, serta pedoman keterandalan struktur sipil secara rinci, melerai keraguan konstruktif demi ketenangan hati proyek Anda.',
 };
 
 export const DEFAULT_PROCESS_STAGES: CmsProcessStage[] = [
@@ -514,6 +542,11 @@ export interface CmsGeneralSettings {
   supportEmail: string;
   phone: string;
   address: string;
+
+  // Custom visual background assets across HomeView.tsx
+  homeElevasiImageUrl?: string;
+  homeProcessBriefImageUrl?: string;
+  homeTestimonialImageUrl?: string;
 }
 
 const DEFAULT_SETTINGS: CmsGeneralSettings = {
@@ -521,7 +554,10 @@ const DEFAULT_SETTINGS: CmsGeneralSettings = {
   subTitle: 'Website kalkulator RAB, generator denah interaktif, dan visualisasi AI konsep desain arsitektur.',
   supportEmail: 'info@oh-architecture-build.id',
   phone: '+62 (21) 7280 1024',
-  address: 'Jl. Wijaya Timur Raya No. 12, Kebayoran Baru, Jakarta Selatan 12170'
+  address: 'Jl. Wijaya Timur Raya No. 12, Kebayoran Baru, Jakarta Selatan 12170',
+  homeElevasiImageUrl: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1200&q=80',
+  homeProcessBriefImageUrl: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80',
+  homeTestimonialImageUrl: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80',
 };
 
 // RAB configurations
@@ -534,6 +570,12 @@ export interface CmsRabConfig {
   styleTags: { id: string; label: string; prompt: string }[];
   addonCosts: Record<string, { label: string; cost: number; description: string }>;
   roomTemplates: RoomConfig[];
+
+  // Style preview images
+  styleMinimalistImg?: string;
+  styleTropicalImg?: string;
+  styleIndustrialImg?: string;
+  styleClassicImg?: string;
 }
 
 export const DEFAULT_RAB_CONFIG: CmsRabConfig = {
@@ -590,7 +632,11 @@ export const DEFAULT_RAB_CONFIG: CmsRabConfig = {
     { id: 'carport', name: 'Garasi / Carport', count: 1, minAreaSqm: 15, label: '🚗 Carport' },
     { id: 'laundry', name: 'Area Cuci Jemur', count: 0, minAreaSqm: 6, label: '🧺 Cuci Jemur' },
     { id: 'garden', name: 'Taman Belakang', count: 0, minAreaSqm: 8, label: '🌿 Taman' },
-  ]
+  ],
+  styleMinimalistImg: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80',
+  styleTropicalImg: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80',
+  styleIndustrialImg: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80',
+  styleClassicImg: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80',
 };
 
 // Facades for easy usage

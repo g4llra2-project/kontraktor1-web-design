@@ -6,6 +6,7 @@
 import { useState, useEffect } from 'react';
 import { ViewPath, RabEstimateInput, RabEstimateResult, BuildingType, RoomLayoutResult, RoomConfig } from '../../types';
 import { PRICE_PER_SQM, FLOOR_MULTIPLIERS, RENOVATION_MULTIPLIER, ADDON_COSTS, ESTIMATE_BREAKDOWN_PERCENTAGES, DEFAULT_ROOM_TEMPLATES, STYLE_TAGS } from '../../constants';
+import { getRabConfig } from '../../lib/cmsData';
 import { generateFloorPlanLayout } from '../../lib/floor-plan-algorithm';
 import { ArrowLeft, ArrowRight, Check, AlertTriangle, Calculator, ChevronRight, RefreshCw, Layers, Plus, Minus, Info, ClipboardCheck, Sparkles, Image, CheckCircle, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -30,6 +31,8 @@ export default function KalkulatorRabView({
   initialInput,
 }: KalkulatorRabViewProps) {
   const [step, setStep] = useState(1);
+  const [rabConfig] = useState(() => getRabConfig());
+  const styleTagsDynamic = rabConfig?.styleTags || STYLE_TAGS;
 
   // Core configuration states
   const [buildingType, setBuildingType] = useState<BuildingType>(initialInput?.buildingType || 'new');
@@ -294,7 +297,7 @@ export default function KalkulatorRabView({
 
     // Construct rich dynamic parameters matching the user's detailed architectural template prompt
     const floorWord = floors === 1 ? 'single-story' : floors === 2 ? 'two-story' : `${floors}-story`;
-    const styleObj = STYLE_TAGS.find(s => s.id === selectedStyle);
+    const styleObj = styleTagsDynamic.find(s => s.id === selectedStyle);
     const styleLabelDisplay = styleObj ? styleObj.label.toLowerCase() : 'minimalist modern';
     const stylePromptDetails = styleObj ? styleObj.prompt : 'clean geometric lines, warm natural light, functional layout';
 
@@ -812,12 +815,12 @@ Style: Minimalist black lines on pure white paper (gambar kerja sipil / teknik s
           clearInterval(interval);
           setAiLoading(false);
           
-          const styleTemplate = STYLE_TAGS.find(s => s.id === selectedStyle);
+          const styleTemplate = styleTagsDynamic.find(s => s.id === selectedStyle);
           const mockImages: Record<string, string> = {
-            minimalist: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80',
-            tropical: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80',
-            industrial: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80',
-            classic: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80',
+            minimalist: rabConfig?.styleMinimalistImg || 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80',
+            tropical: rabConfig?.styleTropicalImg || 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=800&q=80',
+            industrial: rabConfig?.styleIndustrialImg || 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80',
+            classic: rabConfig?.styleClassicImg || 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80',
           };
 
           const newRender = {
@@ -2001,11 +2004,10 @@ Style: Minimalist black lines on pure white paper (gambar kerja sipil / teknik s
 
                 {!aiResult && !aiLoading ? (
                   <div className="space-y-4">
-                    {/* Choose Visual Concept Tag */}
                     <div className="flex flex-col gap-2">
                       <span className="text-[10px] uppercase font-mono tracking-wider text-[#A8A49C]">Pilih Konsep Visual / Eksterior</span>
                       <div className="grid grid-cols-2 gap-2">
-                        {STYLE_TAGS.map((st) => (
+                        {styleTagsDynamic.map((st) => (
                           <button
                             key={st.id}
                             type="button"

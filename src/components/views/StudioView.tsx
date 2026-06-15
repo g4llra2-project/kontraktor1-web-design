@@ -64,7 +64,7 @@ export default function StudioView({ onNavigate, onOpenEnquiry }: StudioViewProp
           <div className="lg:col-span-5 space-y-8 lg:mt-12">
             <div className="relative aspect-[3/4] bg-[#EDEAE3] overflow-hidden border border-[#D6D2C8]/50 rounded-xs group shadow-sm">
               <NextImage 
-                src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1000&q=80"
+                src={headerInfo.studioExplorasiImageUrl || "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1000&q=80"}
                 alt="Studio Eksperimen" 
                 fill
                 sizes="(max-width: 768px) 100vw, 40vw"
@@ -106,7 +106,7 @@ export default function StudioView({ onNavigate, onOpenEnquiry }: StudioViewProp
             {/* Asymmetric Overlapped Image */}
             <div className="relative aspect-[16/10] bg-[#EDEAE3] overflow-hidden border border-[#D6D2C8]/50 rounded-xs group shadow-md lg:translate-x-12">
               <NextImage 
-                src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1200&q=80"
+                src={headerInfo.studioDetailImageUrl || "https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1200&q=80"}
                 alt="Detil Kejujuran Material" 
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
