@@ -86,4 +86,4 @@ export interface LeadInput {
   aiRenderId?: string;
 }
 
-export type ViewPath = 'home' | 'works' | 'studio' | 'process' | 'kalkulator-rab' | 'generator-denah' | 'konsultasi';
+export type ViewPath = 'home' | 'works' | 'studio' | 'process' | 'kalkulator-rab' | 'generator-denah' | 'konsultasi' | 'cms';

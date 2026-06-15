@@ -8,6 +8,7 @@ import { ViewPath } from '../../types';
 import { ArrowDown, X, MapPin, Calendar, Maximize, Hammer, Check } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import NextImage from '../NextImage';
+import { getWorksProjects } from '../../lib/cmsData';
 
 interface WorksViewProps {
   onNavigate: (view: ViewPath) => void;
@@ -48,165 +49,9 @@ function ParallaxImage({ src, alt }: { src: string; alt: string }) {
 export default function WorksView({ onNavigate, onOpenEnquiry }: WorksViewProps) {
   const [activeCategory, setActiveCategory] = useState('Semua');
   const [scrollPct, setScrollPct] = useState(0);
-  const [selectedProj, setSelectedProj] = useState<typeof allProjects[0] | null>(null);
+  const [allProjects] = useState(() => getWorksProjects());
+  const [selectedProj, setSelectedProj] = useState<any>(null);
   const [activeTabDetail, setActiveTabDetail] = useState<'gagasan' | 'material' | 'teknis'>('gagasan');
-
-  // List of high-quality architectural works with complete spec structures (No placeholders!)
-  const allProjects = [
-    { 
-      id: '1', 
-      title: 'Griya Jaloura Utama', 
-      category: 'Rumah Baru', 
-      sub: 'Paddington, QLD · Sedang Konstruksi',
-      location: 'Paddington, QLD',
-      year: '2026',
-      area: '345 m²',
-      imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80',
-      materiality: 'Rangka beton pratekan kustom, dinding batu kapur kasar belah lokal, kusen kayu ulin regenerasi tahan cuaca, kaca berlapis ganda rendah emisi (low-e).',
-      description: 'Griya Jaloura Utama bertumpu pada kontur perbukitan terjal Paddington. Dirancang dengan pendekatan tapak tertingkat, hunian dua lantai ini mengandalkan celah sirkulasi udara vertikal di bagian pusat untuk membuang udara panas secara alami melalui prinsip efek cerobong. Sirkulasi silang yang ekstensif memastikan suhu dalam ruangan tetap sejuk tanpa ketergantungan pada penyejuk udara mekanis.',
-      details: [
-        'Void sentral setinggi 6.2 meter bertindak sebagai jalur hembusan udara panas',
-        'Tembok penahan tanah termal terintegrasi untuk mendinginkan pondasi dasar secara alami',
-        'Tritisan atap kantilever sepanjang 2.4 meter melindungi kaca dari sengatan matahari barat'
-      ]
-    },
-    { 
-      id: '2', 
-      title: 'Griya Jaloura Paviliun', 
-      category: 'Rumah Baru', 
-      sub: 'Paddington, QLD · Selesai 2024',
-      location: 'Paddington, QLD',
-      year: '2024',
-      area: '185 m²',
-      imageUrl: 'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1200&q=80',
-      materiality: 'Struktur rangka kayu jati jawa bersertifikasi FSC, cladding luar lembaran baja corten protektif, lantai halus beton teraso abu-abu polesan tangan.',
-      description: 'Sebuah paviliun kontemporer yang berdiri anggun sebagai perluasan sayap hunian lama Jaloura. Pendekatan minimalis struktural diekspresikan lewat detail sambungan purlin kayu tradisional yang presisi dan kolom baja langsing. Ruang tengah terbuka lebar menyatu dengan halaman rumput dan kolam reflektif, membusungkan pendinginan evaporatif ke seluruh ruang tidur.',
-      details: [
-        'Orientasi utara-selatan penuh guna memanen hembusan angin pasifik harian secara merata',
-        'Pintu geser lipat kaca frameless untuk perluasan ruang transisi tanpa batas visual',
-        'Lantai teraso pasif berkepadatan termal tinggi mereduksi fluktuasi naik-turun suhu ruangan'
-      ]
-    },
-    { 
-      id: '3', 
-      title: 'Graha Roster Grange', 
-      category: 'Komersial', 
-      sub: 'Grange, QLD · Tahap Konstruksi 2026',
-      location: 'Grange, QLD',
-      year: '2026',
-      area: '520 m²',
-      imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
-      materiality: 'Blok roster tanah liat terakota panggang kustom, beton cor mentah bertekstur papan kayu cetakan asli, kisi-kisi aluminium anodized hitam.',
-      description: 'Didesain sebagai markas studio kreatif multi-disiplin, Graha Roster Grange merevolusi selubung bangunan komersial dengan mengaplikasikan kulit dekoratif sekunder (double skin facade) berupa jajaran blok roster terakota buatan pengrajin lokal. Kulit berpori ini menyaring radiasi sinar matahari hingga 65%, menyisakan pendaran bayangan geometris puitis.',
-      details: [
-        'Metode kulit pelindung ganda menyerap beban termal luar sebelum sampai ke tembok dalam',
-        'Konsep tata ruang terbuka fleksibel dengan sirkulasi udara sentral terkoneksi void atrium',
-        'Sistem pemanenan air hujan terintegrasi pengairan taman gantung fasad otomatis'
-      ]
-    },
-    { 
-      id: '4', 
-      title: 'Paviliun Tirta Myrtle', 
-      category: 'Renovasi', 
-      sub: 'Ascot, QLD · Karya Pilihan 2024',
-      location: 'Ascot, QLD',
-      year: '2024',
-      area: '110 m²',
-      imageUrl: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=1200&q=80',
-      materiality: 'Kisi-kisi bilah kayu cedar merah barat daur ulang, lantai ubin batu andesit mentah bertekstur kasar, tiang penyangga baja hitam struktur tipis.',
-      description: 'Paviliun luar ruangan yang melengkapi kolam renang infinity di kawasan pemukiman bernuansa sejarah Ascot. Atap datar yang diringankan ditopang oleh kolom baja ramping berjarak dinamis untuk meminimalkan dampak visual. Kisi-kisi kayu cedar dapat digeser secara adaptif, memadukan privasi mutlak dengan sirkulasi angin segar dari air kolam.',
-      details: [
-        'Mekanisme louvers cedar fleksibel berpivot atas-bawah penyesuai sudut arah semburan angin',
-        'Batu alam andesit non-slip tahan lumut pemantul panas berlebih',
-        'Bak penenang (overwash basin) kolam didesain mereduksi limpahan suara angin bising'
-      ]
-    },
-    { 
-      id: '5', 
-      title: 'Vila Clifton Lestari', 
-      category: 'Rumah Baru', 
-      sub: 'Clifton Hill, QLD · Selesai 2023',
-      location: 'Clifton Hill, QLD',
-      year: '2023',
-      area: '290 m²',
-      imageUrl: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
-      materiality: 'Dinding bata sisa pembongkaran pabrik daur ulang, panel atap baja seng berlapis seng-alumunium terisolasi, lantai kayu ek alami.',
-      description: 'Vila keluarga modern yang menonjolkan tektonika material mentah dan jujur. Peletakan denah memanjang mengutamakan proteksi sisi barat menggunakan lorong fungsional tanpa jendela masif, sedangkan ruang hidup utama di sisi timur sepenuhnya dipasangi jendela kaca tinggi. Desain atap miring asimetris berfungsi mengalirkan air hujan ke tangki bawah tanah.',
-      details: [
-        'Dinding bata tebal gantung ganda dengan rongga udara isolasi hantaran hawa luar',
-        'Struktur kantilever beton tebal menaungi teras bersantai dari cuaca hujan ekstrem',
-        'Kalkulasi atap miring optimal terintegrasi panel sel surya fotovoltaik'
-      ]
-    },
-    { 
-      id: '6', 
-      title: 'Wisma Sidney Tropis', 
-      category: 'Rumah Baru', 
-      sub: 'Alderley, QLD · Penghargaan Arsitekur 2023',
-      location: 'Alderley, QLD',
-      year: '2023',
-      area: '320 m²',
-      imageUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80',
-      materiality: 'Pondasi batu kali belah belantara lokal, tiang kayu jati jawa tua daur ulang, detail flensa penghubung kuningan cuaca.',
-      description: 'Pemenang Penghargaan Arsitekur Regional, Wisma Sidney Tropis adalah contoh rancang bangunan yang bersatu padu dengan ekosistemnya. Pondasi batu kali mengangkat tingkat lantai dasar hingga 1.2 meter di atas tanah untuk menghindari kelembapan tropis, sekaligus memberikan sirkulasi udara konstan di bawah rongga lantai kayu.',
-      details: [
-        'Konstruksi berkonsep rumah panggung modern vernakular bebas rembesan kelembapan tapak',
-        'Ventilasi celah berventilasi udara di bawah bawah atap (soffit venting) pencegah akumulasi panas draf',
-        'Peletakan dinding kayu sekat geser bermanuver penuh meminimalkan penggunaan AC'
-      ]
-    },
-    { 
-      id: '7', 
-      title: 'Griya Haig Harmoni', 
-      category: 'Renovasi', 
-      sub: 'Haig, QLD · Tampil di Grand Designs AU',
-      location: 'Haig, QLD',
-      year: '2024',
-      area: '230 m²',
-      imageUrl: 'https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?auto=format&fit=crop&w=1200&q=80',
-      materiality: 'Penggunaan kembali struktur pondok kayu eucalyptus heritase, panel dinding kaca tempered argon ganda, tangga semen ekspos monolitik.',
-      description: 'Renovasi dramatis atas pondok kayu klasik bersejarah. Kami melestarikan struktur utama pondok kayu depan yang ikonik, lalu membentangkan bagian perluasan belakang menjadi volume struktur kaca gantry berlapis tinggi yang spektakuler. Konstruksi void masif ini menjamin limpahan sinar mentari pagi menerangi interior secara merata.',
-      details: [
-        'Void ganda setinggi 7.2 meter menghubungkan ruang tengah lantai satu dan loteng baca atas',
-        'Penyelamatan kayu eucalyptus historis diolah kembali menggunakan wax lebah ramah lingkungan',
-        'Jendela atap (skylight) otomatis terintegrasi sensor hujan otomatis menutup saat cuaca mendung'
-      ]
-    },
-    { 
-      id: '8', 
-      title: 'Apartemen Mowbray Senja', 
-      category: 'Desain Interior', 
-      sub: 'New Farm, QLD · Selesai 2023',
-      location: 'New Farm, QLD',
-      year: '2023',
-      area: '145 m²',
-      imageUrl: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80',
-      materiality: 'Panel kabinet built-in kayu cedar wangi, ubin keramik glazed buatan tangan kustom berpola air, pilar microcement abu-abu redup.',
-      description: 'Intervensi desain ruang minimalis di lantai atas apartemen tepi sungai New Farm. Penataan difokuskan pada merapikan sekat ruang yang kaku dengan kabinet built-in melingkar terintegrasi. Kamar tidur utama diposisikan fleksibel menggunakan sekat kisi kayu berputar (rotating louvers) yang mengatur sejuknya hembusan sungai.',
-      details: [
-        'Partisi sekat bilah vertikal kayu cedar berputar 360 derajat pengatur privasi tidur dinamis',
-        'Pencahayaan cove hangat ganda berlapis yang diintegrasikan otomatis demi kenyamanan rehat',
-        'Kabinet gantung custom melayang mengoptimalkan ruang gerak horizontal lantai'
-      ]
-    },
-    { 
-      id: '9', 
-      title: 'Townhouse Hawken Asri', 
-      category: 'Rumah Baru', 
-      sub: 'St Lucia, QLD · Selesai 2022',
-      location: 'St Lucia, QLD',
-      year: '2022',
-      area: '410 m²',
-      imageUrl: 'https://images.unsplash.com/photo-1602075433054-01d57ddd48be?auto=format&fit=crop&w=1200&q=80',
-      materiality: 'Blok bata semen aerasi ringan (ALC), rangka baja ringan bergalvanis, ubin semen basah abu-abu industri.',
-      description: 'Kompleks hunian kopel townhouse bertingkat tiga yang berdaya guna energi tinggi di St Lucia. Dirancang melingkari halaman dalam (inner courtyard) bertanam kerimbunan bambu hias yang memicu tarikan sirkulasi efek cerobong pendingin klaster pemukiman.',
-      details: [
-        'Taman dalam (inner courtyard) terbuka penampung hawa sejuk malam untuk dilepas siang hari',
-        'Dinding pembatas beton aerasi dengan daya kedap suara antar unit hingga 55dB',
-        'Instalasi atap pengumpul air bersirkulasi filter arang bambu murni'
-      ]
-    }
-  ];
 
   const categories = ['Semua', 'Rumah Baru', 'Renovasi', 'Komersial', 'Desain Interior'];
 

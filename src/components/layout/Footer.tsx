@@ -119,6 +119,15 @@ export default function Footer({ onNavigate, onOpenEnquiry }: FooterProps) {
                   Saran Penataan Denah (AI)
                 </button>
               </li>
+              <li className="pt-2 border-t border-white/[0.05] mt-1">
+                <button
+                  onClick={() => onNavigate('cms')}
+                  className="text-xs tracking-wider text-brand-orange/80 hover:text-brand-orange hover:underline transition-all focus:outline-none cursor-pointer font-mono font-bold"
+                  id="foot-nav-cms"
+                >
+                  [⚙️ CMS Control Center]
+                </button>
+              </li>
             </ul>
           </div>
 

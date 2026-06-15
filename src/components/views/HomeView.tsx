@@ -10,6 +10,7 @@ import { ArrowUpRight, ArrowDown, Shield, Compass, CircleDollarSign, PencilRuler
 import gsap from 'gsap';
 import ThreeInteractiveCanvas from '../ThreeInteractiveCanvas';
 import NextImage from '../NextImage';
+import { getHeroSlides, getEthicsTabs, getWorksProjects } from '../../lib/cmsData';
 
 interface HomeViewProps {
   onNavigate: (view: ViewPath) => void;
@@ -22,6 +23,24 @@ export default function HomeView({ onNavigate, onOpenEnquiry }: HomeViewProps) {
   const [activeTabEthos, setActiveTabEthos] = useState<'passive' | 'budget' | 'material' | 'flow'>('passive');
   const [scrollY, setScrollY] = useState(0);
   const [blueprintMode, setBlueprintMode] = useState<'2d' | '3d'>('2d');
+
+  // Dynamic CMS-controlled state loaders
+  const [heroSlides] = useState(() => getHeroSlides());
+  const [ethicsTabs] = useState(() => getEthicsTabs());
+  const [selectedWorks] = useState(() => {
+    const cmsProjects = getWorksProjects();
+    // Map list to selected works expected keys
+    return cmsProjects.slice(0, 6).map((p, idx) => ({
+      num: String(idx + 1).padStart(2, '0'),
+      title: p.title,
+      year: p.year,
+      desc: p.category,
+      location: p.location,
+      material: p.materiality,
+      area: p.area,
+      imageUrl: p.imageUrl
+    }));
+  });
 
   // Monitor scroll positioning for butter-smooth parallax and scroll effects
   useEffect(() => {
@@ -43,63 +62,14 @@ export default function HomeView({ onNavigate, onOpenEnquiry }: HomeViewProps) {
     return () => ctx.revert();
   }, []);
 
-  // Hero Slider Projects data
-  const heroSlides = [
-    {
-      num: '01',
-      title: 'Paviliun Tirta Myrtle',
-      location: 'Ascot, QLD',
-      year: '2024',
-      tagline: 'Paviliun kayu minimalis dan tempat perlindungan outdoor yang dirancang untuk relaksasi fungsional di luar ruangan sub-tropis.',
-      bgGradient: 'from-[#2B2A26] to-[#1A1A18]',
-      accentColor: '#E05C38',
-      type: 'Paviliun Kolam & Ekstensi',
-      imageUrl: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=1920&q=80',
-      displayTitle: 'PENGALAMAN'
-    },
-    {
-      num: '02',
-      title: 'Griya Jaloura Utama',
-      location: 'Paddington, QLD',
-      year: 'Dalam Konstruksi',
-      tagline: 'Menyelaraskan struktur beton ekspos yang kokoh dengan atap tritisan kayu lebar dan penyangga iklim mikro menghadap ke utara.',
-      bgGradient: 'from-[#3A3832] to-[#1A1A18]',
-      accentColor: '#C4B99A',
-      type: 'Rumah Kustom Mewah Baru',
-      imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80',
-      displayTitle: 'KOLABORATIF'
-    },
-    {
-      num: '03',
-      title: 'Graha Roster Grange',
-      location: 'Grange, QLD',
-      year: 'Selesai 2026',
-      tagline: 'Ruang kerja komersial tiga lantai yang mengintegrasikan roster keramik kustom dan sumur cahaya pasif alami.',
-      bgGradient: 'from-[#282E2E] to-[#1A1A18]',
-      accentColor: '#D96B3F',
-      type: 'Ruang Kantor Kustom',
-      imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1920&q=80',
-      displayTitle: 'BIOKLIMATIK'
-    }
-  ];
-
   // Auto-play the Hero Slide every 7 seconds
   useEffect(() => {
+    if (heroSlides.length === 0) return;
     const timer = setInterval(() => {
       setActiveHeroIdx((prev) => (prev + 1) % heroSlides.length);
     }, 7000);
     return () => clearInterval(timer);
   }, [heroSlides.length]);
-
-  // Selected works matching official site portfolio
-  const selectedWorks = [
-    { num: '01', title: 'Graha Roster Grange', year: '2026', desc: 'Ruang Kantor Komersial', location: 'Grange, QLD', material: 'Roster tanah liat terakota + rangka beton ekspos kasar', area: '420 m²', imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80' },
-    { num: '02', title: 'Paviliun Tirta Myrtle', year: '2024', desc: 'Paviliun Kolam & Ekstensi', location: 'Ascot, QLD', material: 'Kisi-kisi kayu ulin solid + ubin batu alam andesit', area: '85 m²', imageUrl: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=1200&q=80' },
-    { num: '03', title: 'Omah Runic Padma', year: '2026', desc: 'Rumah Kustom Residensial', location: 'Paddington, QLD', material: 'Struktur beton kantilever berat + sekat kayu pivot otomatis', area: '310 m²', imageUrl: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80' },
-    { num: '04', title: 'Griya Stanley Klasik', year: '2026', desc: 'Renovasi Kontemporer', location: 'Grange, QLD', material: 'Pelestarian dinding papan kayu klasik + ruang void kaca masif', area: '190 m²', imageUrl: 'https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?auto=format&fit=crop&w=1200&q=80' },
-    { num: '05', title: 'Vila Clifton Lestari', year: '2025', desc: 'Vila Minimalis Kontemporer', location: 'Clifton Hill, QLD', material: 'Dinding terakota ekspos + struktur baja hitam anti karat', area: '275 m²', imageUrl: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80' },
-    { num: '06', title: 'Wisma Dickens Tropis', year: '2026', desc: 'Residensial Tropis Bioklimatik', location: 'Alderley, QLD', material: 'Atap tritisan lengkung penahan panas + panel termal surya', area: '225 m²', imageUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80' }
-  ];
 
   // Render highly-polished high-end vector drawing schematics for each project on hover
   const renderVectorDrawing = (index: number) => {
@@ -414,14 +384,11 @@ export default function HomeView({ onNavigate, onOpenEnquiry }: HomeViewProps) {
 
             {/* Quick buttons */}
             <div className="flex flex-col gap-2 mt-8 lg:mt-16 border-l border-[#D6D2C8] pl-2 relative">
-              {[
-                { id: 'passive', label: 'Studi Desain Pasif', icon: Compass },
-                { id: 'budget', label: 'Transparansi Anggaran', icon: CircleDollarSign },
-                { id: 'material', label: 'Kejujuran Material', icon: Shield },
-                { id: 'flow', label: 'Alur Ruang Intuitif', icon: PencilRuler }
-              ].map((tab) => {
+              {ethicsTabs.map((tab, idx) => {
                 const isActive = activeTabEthos === tab.id;
-                const IconComponent = tab.icon;
+                // Alternate icons based on tab index
+                const iconsArr = [Compass, CircleDollarSign, Shield, PencilRuler];
+                const IconComponent = iconsArr[idx] || Compass;
                 return (
                   <button
                     key={tab.id}
@@ -439,7 +406,7 @@ export default function HomeView({ onNavigate, onOpenEnquiry }: HomeViewProps) {
                       />
                     )}
                     <IconComponent className={`w-4 h-4 shrink-0 transition-transform duration-300 ${isActive ? 'scale-110 rotate-12' : 'opacity-70 group-hover:opacity-100'}`} />
-                    <span>{tab.label}</span>
+                    <span>{tab.title}</span>
                   </button>
                 );
               })}
@@ -449,129 +416,40 @@ export default function HomeView({ onNavigate, onOpenEnquiry }: HomeViewProps) {
           {/* Column B: Dynamic visual presentation detail */}
           <div className="lg:col-span-12 xl:col-span-7 bg-brand-white border border-[#D6D2C8] p-8 md:p-12 shadow-sm rounded-xs flex flex-col justify-between min-h-[360px]">
             <AnimatePresence mode="wait">
-              {activeTabEthos === 'passive' && (
-                <motion.div
-                  key="passive"
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  transition={{ duration: 0.35 }}
-                  className="space-y-6"
-                >
-                  <div className="flex items-center gap-2 text-brand-orange text-xs font-mono tracking-widest uppercase font-bold">
-                    [01 · DESAIN TROPIS PASIF]
-                  </div>
-                  <h3 className="font-serif text-2.5xl sm:text-3.5xl text-brand-black font-normal leading-tight">
-                    Memaksimalkan sirkulasi udara alami dan pencahayaan yang teduh
-                  </h3>
-                  <p className="text-sm text-brand-grey leading-relaxed">
-                    Rumah tropis yang ideal harus bisa bernapas bebas. Kami merancang tata letak bangunan agar selalu sejuk sepanjang hari dengan memanfaatkan arah embusan angin dan meminimalkan paparan panas matahari langsung. Melalui bukaan jendela yang strategis, sirkulasi vertikal, dan kisi-kisi kayu, hunian Anda tetap terasa nyaman tanpa harus bergantung sepenuhnya pada pendingin udara.
-                  </p>
-                  <div className="grid grid-cols-2 gap-4 border-t border-[#D6D2C8]/60 pt-6 font-sans">
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wider text-brand-grey block">Kenyamanan Termal</span>
-                      <strong className="text-xs text-brand-black">Aliran udara mengalir alami tanpa pengap</strong>
+              {(() => {
+                const currentTab = ethicsTabs.find(t => t.id === activeTabEthos);
+                if (!currentTab) return null;
+                return (
+                  <motion.div
+                    key={currentTab.id}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -15 }}
+                    transition={{ duration: 0.35 }}
+                    className="space-y-6"
+                  >
+                    <div className="flex items-center gap-2 text-brand-orange text-xs font-mono tracking-widest uppercase font-bold text-left">
+                      {currentTab.sub}
                     </div>
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wider text-brand-grey block">Orientasi Kedudukan</span>
-                      <strong className="text-xs text-brand-black">Mengurangi paparan terik matahari langsung</strong>
+                    <h3 className="font-serif text-2.5xl sm:text-3.5xl text-brand-black font-normal leading-tight text-left">
+                      {currentTab.title}
+                    </h3>
+                    <p className="text-sm text-brand-grey leading-relaxed text-left">
+                      {currentTab.desc}
+                    </p>
+                    <div className="grid grid-cols-2 gap-4 border-t border-[#D6D2C8]/60 pt-6 font-sans">
+                      <div className="text-left">
+                        <span className="text-[10px] uppercase tracking-wider text-brand-grey block font-semibold">{currentTab.point1Title}</span>
+                        <strong className="text-xs text-brand-black font-medium">{currentTab.point1Desc}</strong>
+                      </div>
+                      <div className="text-left">
+                        <span className="text-[10px] uppercase tracking-wider text-brand-grey block font-semibold">{currentTab.point2Title}</span>
+                        <strong className="text-xs text-brand-black font-medium">{currentTab.point2Desc}</strong>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              )}
- 
-              {activeTabEthos === 'budget' && (
-                <motion.div
-                  key="budget"
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  transition={{ duration: 0.35 }}
-                  className="space-y-6"
-                >
-                  <div className="flex items-center gap-2 text-brand-orange text-xs font-mono tracking-widest uppercase font-bold">
-                    [02 · KETERBUKAAN ANGGARAN]
-                  </div>
-                  <h3 className="font-serif text-2.5xl sm:text-3.5xl text-brand-black font-normal leading-tight">
-                    Perencanaan biaya yang terbuka sejak langkah pertama
-                  </h3>
-                  <p className="text-sm text-brand-grey leading-relaxed">
-                    Bagi kami, kepercayaan dimulai dari keterbukaan biaya. Kami berkomitmen penuh untuk menghindari pembengkakan anggaran saat masa konstruksi berlangsung. Melalui sistem perhitungan RAB yang terintegrasi, Anda bisa memantau estimasi kebutuhan biaya sejak tahap perencanaan denah awal secara transparan dan akurat.
-                  </p>
-                  <div className="grid grid-cols-2 gap-4 border-t border-[#D6D2C8]/60 pt-6 font-sans">
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wider text-brand-grey block">Rencana Anggaran</span>
-                      <strong className="text-xs text-brand-black">Deviasi estimasi minimal di bawah ±5%</strong>
-                    </div>
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wider text-brand-grey block">Acuan Harga Lokal</span>
-                      <strong className="text-xs text-brand-black">Berdasarkan harga material aktual di lapangan</strong>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
- 
-              {activeTabEthos === 'material' && (
-                <motion.div
-                  key="material"
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  transition={{ duration: 0.35 }}
-                  className="space-y-6"
-                >
-                  <div className="flex items-center gap-2 text-brand-orange text-xs font-mono tracking-widest uppercase font-bold">
-                    [03 · KEJUJURAN MATERIAL]
-                  </div>
-                  <h3 className="font-serif text-2.5xl sm:text-3.5xl text-brand-black font-normal leading-tight">
-                    Mengekspos keindahan alami material yang berkarakter
-                  </h3>
-                  <p className="text-sm text-brand-grey leading-relaxed">
-                    Setiap material memiliki jiwanya sendiri. Kami senang menggunakan elemen-elemen alami yang semakin indah seiring berjalannya waktu—seperti kayu solid, batu alam lokal, semen bertekstur, dan ubin terakota. Dengan meminimalkan lapisan finishing sintetis yang tebal, kami menghadirkan karakter asli material yang ramah di mata dan hangat disentuh.
-                  </p>
-                  <div className="grid grid-cols-2 gap-4 border-t border-[#D6D2C8]/60 pt-6 font-sans">
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wider text-brand-grey block">Kayu Keras Pilihan</span>
-                      <strong className="text-xs text-brand-black">Hanya memakai kayu bersertifikat legal resmi</strong>
-                    </div>
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wider text-brand-grey block">Apresiasi Tekstur</span>
-                      <strong className="text-xs text-brand-black">Karakter asri dari serat alami tanpa penutup cat</strong>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
- 
-              {activeTabEthos === 'flow' && (
-                <motion.div
-                  key="flow"
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -15 }}
-                  transition={{ duration: 0.35 }}
-                  className="space-y-6"
-                >
-                  <div className="flex items-center gap-2 text-brand-orange text-xs font-mono tracking-widest uppercase font-bold">
-                    [04 · ALUR RUANG INTUITIF]
-                  </div>
-                  <h3 className="font-serif text-2.5xl sm:text-3.5xl text-brand-black font-normal leading-tight">
-                    Transisi ruang yang mengalir luwes dan terasa luas
-                  </h3>
-                  <p className="text-sm text-brand-grey leading-relaxed">
-                    Rumah tidak semestinya terasa seperti labirin yang kaku dan sempit. Kami merancang hubungan antarruang yang menyatu dengan lembut dan minim sekat tebal. Desain kami mendekatkan area santai keluarga dengan hijaunya taman luar, menciptakan pengalaman ruang yang luas, dinamis, dan selalu menyambut dengan hangat.
-                  </p>
-                  <div className="grid grid-cols-2 gap-4 border-t border-[#D6D2C8]/60 pt-6 font-sans">
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wider text-brand-grey block">Keluwesan Layout</span>
-                      <strong className="text-xs text-brand-black">Zonasi adaptif &amp; ruang multi-fungsi</strong>
-                    </div>
-                    <div>
-                      <span className="text-[10px] uppercase tracking-wider text-brand-grey block">Sinar Matahari Alami</span>
-                      <strong className="text-xs text-brand-black">Cahaya menyinari setiap sudut sela ruangan</strong>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
+                  </motion.div>
+                );
+              })()}
             </AnimatePresence>
             
             <div className="mt-8 pt-4 flex gap-4 items-center">

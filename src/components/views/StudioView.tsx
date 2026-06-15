@@ -3,10 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { useState } from 'react';
 import { ViewPath } from '../../types';
 import { motion } from 'motion/react';
 import { Shield, Sparkles, User, FileCheck, ArrowRight, Layers, Compass, Sun, Ruler } from 'lucide-react';
 import NextImage from '../NextImage';
+import { getStudioHeader, getTeamMembers, getSpecializations } from '../../lib/cmsData';
 
 interface StudioViewProps {
   onNavigate: (view: ViewPath) => void;
@@ -14,90 +16,24 @@ interface StudioViewProps {
 }
 
 export default function StudioView({ onNavigate, onOpenEnquiry }: StudioViewProps) {
-  // 7 Team members with robust credentials
-  const teamMembers = [
-    { 
-      name: 'Johnny Hyde', 
-      role: 'Director / Principal', 
-      credentials: 'M. Arch (QUT), B.Be Arch (QUT)\nBOA Queensland No. 4787\nNSW Reg. No. 10589',
-      initials: 'JH',
-      bgPattern: 'bg-[#1A1A18]/5 text-brand-black/10'
-    },
-    { 
-      name: 'Poppie Kenneally', 
-      role: 'Director — Interior Designer', 
-      credentials: 'B.Be Arch (QUT)\nDip Interior Des (IDI)\nRegistrasi Desainer Interior Senior',
-      initials: 'PK',
-      bgPattern: 'bg-brand-orange/5 text-brand-orange/10'
-    },
-    { 
-      name: 'Daniel Hickey', 
-      role: 'Associate Architect', 
-      credentials: 'M.Arch (UQ), B.Arch Des (UQ)\nBOA Queensland No. 5881\nSertifikasi Gedung Hijau Madya',
-      initials: 'DH',
-      bgPattern: 'bg-[#B0AC9F]/10 text-[#4E4D48]/10'
-    },
-    { 
-      name: 'Nick Tan', 
-      role: 'Senior Registered Architect', 
-      credentials: 'M.Arch (QUT), B.Des (ArchSt) Hons.\nBOA Queensland No. 6021',
-      initials: 'NT',
-      bgPattern: 'bg-[#1A1A18]/5 text-brand-black/10'
-    },
-    { 
-      name: 'Rachael Mellick', 
-      role: 'Registered Architect', 
-      credentials: 'M.Arch (UQ), B.Arch Des (UQ)\nBOA Queensland No. 5501\nSpesialis Simulasi Iklim Makro',
-      initials: 'RM',
-      bgPattern: 'bg-brand-orange/5 text-brand-orange/10'
-    },
-    { 
-      name: 'Laura Sherriff', 
-      role: 'Architect & Sustainability Lead', 
-      credentials: 'M.Arch (UQ), B.Arch Des (UQ)\nBOA Queensland No. 5673',
-      initials: 'LS',
-      bgPattern: 'bg-[#B0AC9F]/10 text-[#4E4D48]/10'
-    },
-    { 
-      name: 'Larisa Wright', 
-      role: 'Studio & Office Operations Manager', 
-      credentials: 'B.Bus Studio & Enterprise Management\nKombinasi 12 Th Pengalaman Layanan',
-      initials: 'LW',
-      bgPattern: 'bg-[#1A1A18]/5 text-brand-black/10'
-    }
-  ];
-
-  // Core Service Offerings & Architecture Specializations
-  const specializations = [
-    {
-      num: '01',
-      title: 'Arsitektur Tropis Kontemporer',
-      desc: 'Formulasi gubahan masa bangunan modern yang responsif terhadap radiasi matahari, mengoptimalkan peneduh alami, dan memaksimalkan integrasi ruang hijau terbuka.',
-      icon: Compass,
-      highlights: ['Passive Cooling', 'Sirkulasi Angin Silang', 'Overhanging Roofs']
-    },
-    {
-      num: '02',
-      title: 'Desain Interior & Tata Spasial',
-      desc: 'Penyusunan alur sirkulasi ruang dalam yang mengalir tanpa sekat (open-plan) berbadankan materialitas lokal bersahaja seperti kayu natural, batu pori, serta beton expose.',
-      icon: Layers,
-      highlights: ['Custom Millwork', 'Material Kejujuran', 'Pencahayaan Warm-Tone']
-    },
-    {
-      num: '03',
-      title: 'Simulasi Energi & Iklim Mikro',
-      desc: 'Penerapan teknologi digital untuk mensimulasikan pergerakan cahaya matahari musiman serta aliran fluida angin demi menjamin kenyamanan termal tanpa ketergantungan AC.',
-      icon: Sun,
-      highlights: ['Solar Shadow Studies', 'Natural Daylighting', 'Thermal Comfort Index']
-    },
-    {
-      num: '04',
-      title: 'Manajemen Detail Konstruksi',
-      desc: 'Asistensi kurasi material premium berkualitas tinggi, pengawasan presisi detail sambungan struktur di lapangan, hingga koordinasi berkala bersama kontraktor terpilih.',
-      icon: Ruler,
-      highlights: ['Material Sourcing', 'Precision Detailing', 'Owner Representation']
-    }
-  ];
+  // CMS state loaders
+  const [headerInfo] = useState(() => getStudioHeader());
+  const [teamMembers] = useState(() => {
+    const cmsTeam = getTeamMembers();
+    const patterns = ['bg-[#1A1A18]/5 text-brand-black/10', 'bg-brand-orange/5 text-brand-orange/10', 'bg-[#B0AC9F]/10 text-[#4E4D48]/10'];
+    return cmsTeam.map((m, idx) => ({
+      ...m,
+      bgPattern: patterns[idx % patterns.length]
+    }));
+  });
+  const [specializations] = useState(() => {
+    const cmsSpecs = getSpecializations();
+    const icons = [Compass, Layers, Sun, Ruler];
+    return cmsSpecs.map((s, idx) => ({
+      ...s,
+      icon: icons[idx % icons.length]
+    }));
+  });
 
   return (
     <div className="flex flex-col w-full text-brand-black bg-brand-white" id="page-studio-root">
@@ -107,15 +43,15 @@ export default function StudioView({ onNavigate, onOpenEnquiry }: StudioViewProp
         <div className="absolute inset-0 bg-[#A8A49C]/15 z-0 pointer-events-none" />
         <div className="absolute inset-0 bg-gradient-to-tr from-[#1A1A18] to-transparent z-10" />
 
-        <div className="relative z-10 max-w-4xl" id="studio-hero-content">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-[#E05C38] font-bold block mb-4">
-            (TENTANG STUDIO KAMI)
+        <div className="relative z-10 max-w-4xl animate-fadeIn" id="studio-hero-content">
+          <span className="text-[10px] uppercase tracking-[0.2em] text-[#E05C38] font-bold block mb-4 text-left">
+            {headerInfo.eyebrow}
           </span>
-          <h1 className="font-serif text-3.5xl sm:text-4.5xl md:text-5xl font-normal text-white leading-snug tracking-tight">
-            Di OH, kami mengedepankan pendekatan kolaboratif.
+          <h1 className="font-serif text-3.5xl sm:text-4.5xl md:text-5xl font-normal text-white leading-snug tracking-tight text-left">
+            {headerInfo.heading}
           </h1>
-          <p className="font-serif italic text-base sm:text-lg text-white/70 max-w-2xl mt-4 leading-relaxed">
-            Baik saat bekerja di dalam studio maupun berdampingan dengan klien dan mitra, proses bersinergi ini melahirkan karya nyata yang seirama dengan impian Anda dan idealisme arsitektural kami.
+          <p className="font-serif italic text-base sm:text-lg text-white/70 max-w-2xl mt-4 leading-relaxed text-left">
+            {headerInfo.narrativeSubtitle}
           </p>
         </div>
       </section>
@@ -151,21 +87,20 @@ export default function StudioView({ onNavigate, onOpenEnquiry }: StudioViewProp
           {/* Right Column: Title, Narrative text, and Asymmetric Horizontal Image */}
           <div className="lg:col-span-7 space-y-12">
             <div className="space-y-4">
-              <span className="text-[9px] uppercase tracking-[0.24em] text-brand-grey font-sans font-bold block">
+              <span className="text-[9px] uppercase tracking-[0.24em] text-brand-grey font-sans font-bold block text-left">
                 // Etos Perancangan
               </span>
-              <h2 className="font-serif text-4xl sm:text-5.5xl text-[#1A1A18] font-light leading-[1.05] tracking-tight">
-                Kesetimbangan <span className="italic text-brand-orange font-serif font-normal">Intuisi Arsitektural</span> serta Tanggapan Iklim Khas Tapak.
+              <h2 className="font-serif text-4xl sm:text-5.5xl text-[#1A1A18] font-light leading-[1.05] tracking-tight text-left">
+                {headerInfo.aboutHeading}
               </h2>
             </div>
 
-            <div className="space-y-6 max-w-2xl leading-relaxed text-[#3C3A35] font-sans text-sm sm:text-base">
-              <p>
-                Etos perancangan kami berakar kuat pada nilai-nilai desain pasif tropis, perencanaan ruang yang cermat, dan sirkulasi alur yang intuitif. Kami membidani setiap rancangan dengan tekad melerai kerumitan hidup harian — menyuguhkan kenyamanan dan kejujuran bentuk melalui ruang yang fungsional sekaligus anggun.
-              </p>
-              <p>
-                Di OH Architecture, kami meyakini bahwa arsitektur yang bernilai adalah perwujudan selaras antara manusia dan tapak tempatnya berpijak, keserasian wujud dan kegunaan, serta kecocokan visi masa depan dengan karakter materialitas natural yang dibiarkan menua secara elegan seiring perjalanan usia bangunan.
-              </p>
+            <div className="space-y-6 max-w-2xl leading-relaxed text-[#3C3A35] font-sans text-sm sm:text-base text-left">
+              {headerInfo.aboutText.split('\n').filter(Boolean).map((para, pIdx) => (
+                <p key={pIdx}>
+                  {para}
+                </p>
+              ))}
             </div>
 
             {/* Asymmetric Overlapped Image */}

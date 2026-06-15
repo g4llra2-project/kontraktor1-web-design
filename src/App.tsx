@@ -15,6 +15,7 @@ import ProcessView from './components/views/ProcessView';
 import KalkulatorRabView from './components/views/KalkulatorRabView';
 import KonsultasiView from './components/views/KonsultasiView';
 import EnquiryDrawer from './components/layout/EnquiryDrawer';
+import CmsAdminView from './components/views/CmsAdminView';
 
 export default function App() {
   const [currentView, setCurrentView] = useState<ViewPath>('home');
@@ -137,6 +138,10 @@ export default function App() {
                 onNavigate={handleNavigate}
                 onSubmitLead={handleSubmitLead}
               />
+            )}
+
+            {currentView === 'cms' && (
+              <CmsAdminView onNavigate={handleNavigate} />
             )}
           </motion.div>
         </AnimatePresence>
